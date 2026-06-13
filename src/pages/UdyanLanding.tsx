@@ -62,8 +62,20 @@ const UdyanLanding: React.FC = () => {
             {/* Right Buttons */}
             <div className="flex items-center gap-3">
               <Link
+                to="/login"
+                className="text-base font-medium px-5 py-2.5 rounded-full text-[#4B4963] hover:text-[#0D0D0D] transition-colors duration-200"
+              >
+                Log in
+              </Link>
+              <Link
+                to="/signup"
+                className="bg-[#0D0D0D] text-[#F4F2F7] text-base font-medium px-5 py-2.5 rounded-full hover:bg-[#4B4963] transition-colors duration-200"
+              >
+                Sign up
+              </Link>
+              <Link
                 to="/udyan"
-                className="bg-black text-white text-base font-medium px-7 py-2.5 rounded-full hover:bg-gray-800 transition-colors duration-200"
+                className="border border-[#BFB7E3] bg-[#F4F2F7] text-[#0D0D0D] text-base font-medium px-5 py-2.5 rounded-full hover:bg-[#D9D2F0] transition-colors duration-200"
               >
                 Launch Dashboard
               </Link>
