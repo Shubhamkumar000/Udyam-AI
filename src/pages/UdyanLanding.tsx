@@ -120,7 +120,7 @@ const UdyanLanding: React.FC = () => {
                 className="text-black text-5xl md:text-7xl font-semibold leading-tight max-w-xl mb-4 font-norms"
                 style={{ letterSpacing: '-0.04em', whiteSpace: 'pre-line' }}
               >
-                {'Your Compliance\nWorks'}
+                {'AI-Powered Compliance for Indian Businesses'}
               </h1>
               
               <p 
