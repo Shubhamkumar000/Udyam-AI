@@ -220,7 +220,13 @@ const UdyanUploadLicenses: React.FC = () => {
         expiry_date: extractedExpiry,
         authority: extractedAuthority,
         confidence_score: 0.96,
-        portal_url: 'https://india.gov.in',
+        portal_url: 
+          extractedType === 'FSSAI' ? 'https://foodlicenseportal.org/Home/renew?gad_source=1&gad_campaignid=23038392925&gbraid=0AAAAACzocouD9ojWtNfBiCtpWM2iev4Kp&gclid=Cj0KCQjw_7PRBhDcARIsAMjV7jnDkAkl_H_guWUD_Spud_xBdQ1LIoXh2ZWCh0R9HprCRjXePuHlHIcaAj4YEALw_wcB' :
+          extractedType === 'GST' ? 'https://services.gst.gov.in/services/login' :
+          extractedType === 'Trade License' ? 'https://bbmp.gov.in' :
+          extractedType === 'Shop & Establishment' ? 'https://ekarmika.karnataka.gov.in/' :
+          extractedType === 'Fire NOC' ? 'https://kfireservices.gov.in/' :
+          'https://india.gov.in',
         id: '',
         status: 'Active' as any
       };

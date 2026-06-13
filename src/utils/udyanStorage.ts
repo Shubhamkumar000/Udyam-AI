@@ -158,7 +158,18 @@ export const saveOnboarding = async (answers: OnboardingAnswers) => {
   const res = await fetch(`${API_BASE}/onboarding`, {
     method: 'POST',
     headers: getHeaders(),
-    body: JSON.stringify(answers)
+    body: JSON.stringify({
+      businessSector: answers.business_sector,
+      employeeCountRange: answers.employee_count_range,
+      annualRevenueRange: answers.annual_revenue_range,
+      locationCount: answers.location_count,
+      premisesType: answers.premises_type,
+      dailyFootfall: answers.daily_footfall,
+      businessOperations: answers.business_operations,
+      hazardousMaterials: answers.hazardous_materials,
+      existingLicenses: answers.existing_licenses,
+      compliancePriority: answers.compliance_priority
+    })
   });
   if (!res.ok) throw new Error('Failed to save onboarding answers');
   return res.json();
@@ -169,7 +180,23 @@ export const getOnboarding = async (): Promise<Partial<OnboardingAnswers>> => {
     const res = await fetch(`${API_BASE}/onboarding`, {
       headers: getHeaders()
     });
-    if (res.ok) return await res.json();
+    if (res.ok) {
+      const data = await res.ok ? await res.json() : null;
+      if (data) {
+        return {
+          business_sector: data.businessSector || '',
+          employee_count_range: data.employeeCountRange || '',
+          annual_revenue_range: data.annualRevenueRange || '',
+          location_count: data.locationCount || '',
+          premises_type: data.premisesType || '',
+          daily_footfall: data.dailyFootfall || '',
+          business_operations: data.businessOperations || [],
+          hazardous_materials: data.hazardousMaterials || '',
+          existing_licenses: data.existingLicenses || [],
+          compliance_priority: data.compliancePriority || ''
+        };
+      }
+    }
   } catch (err) {
     // Failover
   }

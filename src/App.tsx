@@ -11,6 +11,7 @@ import UdyanExtension from './pages/UdyanExtension';
 import UdyanIdentity from './pages/UdyanIdentity';
 import UdyanOnboarding from './pages/UdyanOnboarding';
 import UdyanUploadLicenses from './pages/UdyanUploadLicenses';
+import UdyanLicenseDetail from './pages/UdyanLicenseDetail';
 import { getToken } from './utils/udyanStorage';
 
 // Authentication Guard Component
@@ -93,6 +94,14 @@ const App: React.FC = () => {
           element={
             <ProtectedRoute>
               <UdyanExtension />
+            </ProtectedRoute>
+          } 
+        />
+        <Route 
+          path="/udyan/license/:type" 
+          element={
+            <ProtectedRoute>
+              <UdyanLicenseDetail />
             </ProtectedRoute>
           } 
         />

@@ -215,8 +215,11 @@ async function recalculateCompliance(userId) {
   }
 
   const uploadedTypes = licenses.map(l => l.type);
-  const existingLicenses = requiredLicenses.filter(type => uploadedTypes.includes(type));
-  const missingLicenses = requiredLicenses.filter(type => !uploadedTypes.includes(type));
+  const declaredExisting = onboarding ? onboarding.existingLicenses || [] : [];
+  const allExistingTypes = Array.from(new Set([...uploadedTypes, ...declaredExisting]));
+
+  const existingLicenses = requiredLicenses.filter(type => allExistingTypes.includes(type));
+  const missingLicenses = requiredLicenses.filter(type => !allExistingTypes.includes(type));
 
   // 3. Compliance Score Calculation
   // Start score = 100
@@ -711,14 +714,16 @@ app.post('/api/onboarding', authenticateToken, async (req, res) => {
       { upsert: true, new: true }
     );
 
-    // Also populate details in business profile if not set
-    await BusinessProfile.findOneAndUpdate(
-      { userId: req.user.id },
-      { 
-        business_name: req.body.business_name || '',
-        updatedAt: new Date()
-      }
-    );
+    // Also populate details in business profile if set in request
+    if (req.body.businessName || req.body.business_name) {
+      await BusinessProfile.findOneAndUpdate(
+        { userId: req.user.id },
+        { 
+          businessName: req.body.businessName || req.body.business_name,
+          updatedAt: new Date()
+        }
+      );
+    }
 
     await recalculateCompliance(req.user.id);
     res.json({ status: "success", answers });
@@ -760,6 +765,24 @@ app.post('/api/upload-license', authenticateToken, upload.single('licenseFile'),
       });
     }
 
+    let portalUrl = req.body.portal_url || req.body.portalUrl;
+    if (!portalUrl) {
+      const type = req.body.type;
+      if (type === 'FSSAI') {
+        portalUrl = 'https://foodlicenseportal.org/Home/renew?gad_source=1&gad_campaignid=23038392925&gbraid=0AAAAACzocouD9ojWtNfBiCtpWM2iev4Kp&gclid=Cj0KCQjw_7PRBhDcARIsAMjV7jnDkAkl_H_guWUD_Spud_xBdQ1LIoXh2ZWCh0R9HprCRjXePuHlHIcaAj4YEALw_wcB';
+      } else if (type === 'GST') {
+        portalUrl = 'https://services.gst.gov.in/services/login';
+      } else if (type === 'Trade License') {
+        portalUrl = 'https://bbmp.gov.in';
+      } else if (type === 'Shop & Establishment') {
+        portalUrl = 'https://ekarmika.karnataka.gov.in/';
+      } else if (type === 'Fire NOC') {
+        portalUrl = 'https://kfireservices.gov.in/';
+      } else {
+        portalUrl = 'https://india.gov.in';
+      }
+    }
+
     const newLic = await License.create({
       userId: req.user.id,
       type: req.body.type,
@@ -770,7 +793,7 @@ app.post('/api/upload-license', authenticateToken, upload.single('licenseFile'),
       expiryDate: req.body.expiry_date || req.body.expiryDate || new Date(),
       authority: req.body.authority || '',
       confidenceScore: req.body.confidence_score || req.body.confidenceScore || 0.95,
-      portalUrl: req.body.portal_url || req.body.portalUrl || 'https://india.gov.in'
+      portalUrl
     });
 
     // Also sync business profile numbers
