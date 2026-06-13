@@ -1,6 +1,8 @@
 import React from 'react';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import UdyanLanding from './pages/UdyanLanding';
+import UdyanLogin from './pages/UdyanLogin';
+import UdyanSignup from './pages/UdyanSignup';
 import UdyanDashboard from './pages/UdyanDashboard';
 import UdyanScanner from './pages/UdyanScanner';
 import UdyanChat from './pages/UdyanChat';
@@ -13,6 +15,8 @@ const App: React.FC = () => {
       <Routes>
         {/* Udyan AI Compliance Landing Page */}
         <Route path="/" element={<UdyanLanding />} />
+        <Route path="/login" element={<UdyanLogin />} />
+        <Route path="/signup" element={<UdyanSignup />} />
 
         {/* Udyan AI Compliance Dashboard Routes */}
         <Route path="/udyan" element={<UdyanDashboard />} />
