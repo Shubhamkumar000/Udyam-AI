@@ -1,6 +1,6 @@
 import React from 'react';
 import { ArrowRight } from 'lucide-react';
-import { Link } from 'react-router-dom';
+import { Link, useLocation } from 'react-router-dom';
 export const LogoIcon: React.FC<{ className?: string }> = ({ className = "w-7 h-7" }) => {
   return (
     <svg
@@ -15,6 +15,10 @@ export const LogoIcon: React.FC<{ className?: string }> = ({ className = "w-7 h-
 };
 
 const UdyanLanding: React.FC = () => {
+  const location = useLocation();
+  const loginActive = location.pathname === '/login';
+  const signupActive = location.pathname === '/signup';
+
   const brandList = [
     { name: 'FSSAI', style: { fontFamily: 'Georgia, serif', fontWeight: 700, letterSpacing: '-0.02em', fontSize: '15px' } },
     { name: 'GSTIN', style: { fontFamily: 'Arial, sans-serif', fontWeight: 900, letterSpacing: '0.08em', fontSize: '13px', textTransform: 'uppercase' as const } },
@@ -63,13 +67,21 @@ const UdyanLanding: React.FC = () => {
             <div className="flex items-center gap-3">
               <Link
                 to="/login"
-                className="text-base font-medium px-5 py-2.5 rounded-full text-[#4B4963] hover:text-[#0D0D0D] transition-colors duration-200"
+                className={`text-base font-medium px-5 py-2.5 rounded-full transition-colors duration-200 ${
+                  loginActive
+                    ? 'bg-[#0D0D0D] text-[#F4F2F7] hover:bg-[#4B4963]'
+                    : 'text-[#4B4963] hover:text-[#0D0D0D]'
+                }`}
               >
                 Log in
               </Link>
               <Link
                 to="/signup"
-                className="bg-[#0D0D0D] text-[#F4F2F7] text-base font-medium px-5 py-2.5 rounded-full hover:bg-[#4B4963] transition-colors duration-200"
+                className={`text-base font-medium px-5 py-2.5 rounded-full transition-colors duration-200 ${
+                  signupActive
+                    ? 'bg-[#0D0D0D] text-[#F4F2F7] hover:bg-[#4B4963]'
+                    : 'text-[#4B4963] hover:text-[#0D0D0D]'
+                }`}
               >
                 Sign up
               </Link>

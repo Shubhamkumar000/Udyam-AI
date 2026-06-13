@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
+import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { Eye, EyeOff, Lock, Mail, User, AlertCircle } from 'lucide-react';
 import { apiSignup } from '../utils/udyanStorage';
 
@@ -18,7 +18,11 @@ const AuthShell: React.FC<{ children: React.ReactNode; title: string; descriptio
   children,
   title,
   description,
-}) => (
+}) => {
+  const location = useLocation();
+  const signupActive = location.pathname === '/signup';
+
+  return (
   <div className="min-h-screen bg-[#F4F2F7] text-[#0D0D0D] relative overflow-hidden font-norms">
     <div className="absolute -top-32 -right-32 w-96 h-96 rounded-full bg-[#D9D2F0] blur-3xl opacity-80" />
     <div className="absolute -bottom-32 -left-32 w-[28rem] h-[28rem] rounded-full bg-[#BFB7E3] blur-3xl opacity-70" />
@@ -35,13 +39,21 @@ const AuthShell: React.FC<{ children: React.ReactNode; title: string; descriptio
           <div className="hidden sm:flex items-center gap-3">
             <Link
               to="/login"
-              className="px-5 py-2.5 rounded-full text-[#4B4963] hover:text-[#0D0D0D] font-medium transition-colors"
+              className={`px-5 py-2.5 rounded-full font-medium transition-colors ${
+                !signupActive
+                  ? 'bg-[#0D0D0D] text-[#F4F2F7] hover:bg-[#4B4963]'
+                  : 'text-[#4B4963] hover:text-[#0D0D0D]'
+              }`}
             >
               Log in
             </Link>
             <Link
               to="/signup"
-              className="px-5 py-2.5 rounded-full bg-[#0D0D0D] text-[#F4F2F7] hover:bg-[#4B4963] transition-colors font-medium"
+              className={`px-5 py-2.5 rounded-full font-medium transition-colors ${
+                signupActive
+                  ? 'bg-[#0D0D0D] text-[#F4F2F7] hover:bg-[#4B4963]'
+                  : 'text-[#4B4963] hover:text-[#0D0D0D]'
+              }`}
             >
               Sign up
             </Link>
@@ -84,6 +96,7 @@ const AuthShell: React.FC<{ children: React.ReactNode; title: string; descriptio
     </div>
   </div>
 );
+};
 
 const SignupPage: React.FC = () => {
   const navigate = useNavigate();
@@ -138,8 +151,8 @@ const SignupPage: React.FC = () => {
       await apiSignup(email, password, fullName);
       // Success - Redirect to Identity Verification
       navigate('/udyan/identity');
-    } catch (err: any) {
-      setErrorMsg(err.message || 'Failed to register. Please try again.');
+    } catch (err: unknown) {
+      setErrorMsg(err instanceof Error ? err.message : 'Failed to register. Please try again.');
     } finally {
       setLoading(false);
     }
