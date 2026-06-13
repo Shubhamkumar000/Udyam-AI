@@ -1,0 +1,22 @@
+{
+  "manifest_version": 3,
+  "name": "Udyan Autofill",
+  "version": "1.0",
+  "description": "Intelligently autofills Indian government license forms using Udyan AI business coordinates",
+  "permissions": ["activeTab", "storage"],
+  "host_permissions": [
+    "https://*.gst.gov.in/*",
+    "https://*.fssai.gov.in/*",
+    "https://*.gov.in/*",
+    "http://localhost/*"
+  ],
+  "action": {
+    "default_popup": "popup.html"
+  },
+  "content_scripts": [
+    {
+      "matches": ["https://*.gst.gov.in/*", "https://*.fssai.gov.in/*", "https://*.gov.in/*", "http://localhost/*"],
+      "js": ["content.js"]
+    }
+  ]
+}
