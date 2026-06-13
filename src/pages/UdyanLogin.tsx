@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
-import { Link } from 'react-router-dom';
-import { Eye, EyeOff, Lock, Mail } from 'lucide-react';
+import { Link, useNavigate } from 'react-router-dom';
+import { Eye, EyeOff, Lock, Mail, AlertCircle } from 'lucide-react';
+import { apiLogin, getProfile } from '../utils/udyanStorage';
 
 const LogoIcon: React.FC<{ className?: string }> = ({ className = 'w-8 h-8' }) => (
   <svg
@@ -84,16 +85,54 @@ const AuthShell: React.FC<{ children: React.ReactNode; title: string; descriptio
   </div>
 );
 
-const AuthPage: React.FC = () => {
+const LoginPage: React.FC = () => {
+  const navigate = useNavigate();
   const [showPassword, setShowPassword] = useState(false);
 
-  const handleSubmit = (event: React.FormEvent) => {
+  // Form states
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
+  
+  // Status states
+  const [errorMsg, setErrorMsg] = useState('');
+  const [loading, setLoading] = useState(false);
+
+  const handleSubmit = async (event: React.FormEvent) => {
     event.preventDefault();
+    setErrorMsg('');
+    setLoading(true);
+
+    try {
+      const data = await apiLogin(email, password);
+      
+      if (data.onboardingCompleted) {
+        navigate('/udyan');
+      } else {
+        // Fetch profile to verify Aadhaar/PAN status
+        const profile = await getProfile();
+        if (profile.aadhaar || profile.pan) {
+          navigate('/udyan/onboarding');
+        } else {
+          navigate('/udyan/identity');
+        }
+      }
+    } catch (err: any) {
+      setErrorMsg(err.message || 'Invalid email or password.');
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
     <AuthShell title="Welcome back" description="Log in to your Udyam-AI workspace.">
       <form onSubmit={handleSubmit} className="rounded-[2rem] bg-[#E7E4EE] border border-[#D9D2F0] shadow-xl p-6 md:p-8">
+        {errorMsg && (
+          <div className="mb-5 p-4 bg-red-50 border border-red-200 rounded-2xl flex gap-3 items-center text-red-700">
+            <AlertCircle className="w-5 h-5 text-red-600 shrink-0" />
+            <span className="text-sm font-semibold">{errorMsg}</span>
+          </div>
+        )}
+
         <div className="space-y-5">
           <div>
             <label htmlFor="email" className="block text-sm font-medium text-[#4B4963] mb-2">
@@ -104,8 +143,11 @@ const AuthPage: React.FC = () => {
               <input
                 id="email"
                 type="email"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
                 placeholder="you@example.com"
                 className="w-full pl-12 pr-4 py-3.5 rounded-2xl bg-[#F4F2F7] border border-[#BFB7E3] text-[#0D0D0D] placeholder:text-[#A79FD8] focus:outline-none focus:ring-2 focus:ring-[#7E78B5] focus:border-transparent"
+                required
               />
             </div>
           </div>
@@ -119,8 +161,11 @@ const AuthPage: React.FC = () => {
               <input
                 id="password"
                 type={showPassword ? 'text' : 'password'}
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
                 placeholder="Enter your password"
                 className="w-full pl-12 pr-12 py-3.5 rounded-2xl bg-[#F4F2F7] border border-[#BFB7E3] text-[#0D0D0D] placeholder:text-[#A79FD8] focus:outline-none focus:ring-2 focus:ring-[#7E78B5] focus:border-transparent"
+                required
               />
               <button
                 type="button"
@@ -148,9 +193,17 @@ const AuthPage: React.FC = () => {
 
           <button
             type="submit"
-            className="w-full py-3.5 rounded-2xl bg-[#0D0D0D] text-[#F4F2F7] text-base font-semibold hover:bg-[#4B4963] transition-colors"
+            disabled={loading}
+            className="w-full py-3.5 rounded-2xl bg-[#0D0D0D] text-[#F4F2F7] text-base font-semibold hover:bg-[#4B4963] transition-colors flex justify-center items-center gap-2 disabled:bg-gray-600"
           >
-            Log in
+            {loading ? (
+              <>
+                <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin" />
+                Logging in...
+              </>
+            ) : (
+              'Log in'
+            )}
           </button>
         </div>
 
@@ -165,4 +218,4 @@ const AuthPage: React.FC = () => {
   );
 };
 
-export default AuthPage;
+export default LoginPage;

@@ -262,64 +262,64 @@ Trade Licenses are regulated by local municipal corporations (like BBMP, BMC, MC
 **4. అవసరమైన పత్రాలు:**
 - మునుపటి ట్రేడ్ లైసెన్స్ కాపీ.
 - లేటెస్ట్ ప్రాపర్టీ టాక్స్ రశీదు.
-- లీజు అగ్రిమెంట్ పత్రం.`,
+- అద్దె ఒప్పందం లేదా యజమాని NOC.
+- శానిటరీ క్లియరెన్స్ సర్టిఫికేట్.`,
 
-      ta: `### **வர்த்தக உரிமம் காலாவதி அபராதங்கள்**
+      ta: `### **வர்த்தக உரிமம் காலாவதி அபராதம்**
 
 **1. விளக்கம்:**
-வர்த்தக உரிமங்கள் (Trade License) உள்ளூர் மாநகராட்சி மூலம் ஒழுங்குபடுத்தப்படுகின்றன. இவை ஆண்டுதோறும் புதுப்பிக்கப்பட வேண்டும்.
+வர்த்தக உரிமங்கள் (Trade Licenses) உள்ளூர் மாநகராட்சிகளால் வழங்கப்படுகின்றன. இவை ஒவ்வோராண்டும் புதுப்பிக்கப்பட வேண்டும்.
 
 **2. புதுப்பிக்கும் படிகள்:**
-- உள்ளூர் மாநகராட்சி இணையதளத்திற்குச் செல்லவும்.
-- முந்தைய வர்த்தக உரிம எண்ணைப் பயன்படுத்தி தேடவும்.
-- நடப்பு ஆண்டு சொத்து வரி ரசீதை பதிவேற்றவும்.
-- புதுப்பித்தல் கட்டணத்தை செலுத்தவும்.
+- உள்ளூர் மாநகராட்சி இணையதளத்தில் உள்நுழையவும்.
+- தற்போதுள்ள வர்த்தக உரிமப் பதிவைத் தேடவும்.
+- நடப்பு ஆண்டின் சொத்து வரி செலுத்திய ரசீதை பதிவேற்றவும்.
+- புதுப்பித்தல் கட்டணத்தை ஆன்லைனில் செலுத்தவும்.
 
 **3. காலாவதி அபாயங்கள்:**
-- கால அவகாசத்திற்குள் புதுப்பிக்காவிட்டால் உரிமக் கட்டணத்தில் **50% கூடுதல் அபராதம்**.
-- நகராட்சி அதிகாரிகள் மூலம் வணிக வளாகங்களுக்குச் சீல் வைக்கப்படும்.
+- சலுகைக் காலத்திற்குள் புதுப்பிக்காவிட்டால் அசல் உரிமக் கட்டணத்தில் **50% கூடுதல் அபராதம்**.
+- மாநகராட்சி விதிகளின் கீழ் சட்ட நடவடிக்கை மற்றும் கடைக்கு சீல் வைக்கப்படும்.
 
 **4. தேவையான ஆவணங்கள்:**
-- கடந்த ஆண்டு வர்த்தக உரிம நகல்.
-- சொத்து வரி செலுத்திய புதிய ரசீது.
-- வாடகை ஒப்பந்தப் பத்திரம் அல்லது NOC.`
+- முந்தைய ஆண்டின் வர்த்தக உரிம நகல்.
+- கட்டிடத்தின் சமீபத்திய சொத்து வரி ரசீது.
+- வாடகை ஒப்பந்தம் அல்லது உரிமையாளரின் NOC.
+- சுகாதார சான்றிதழ்.`
     },
     'q-gst-inactive': {
-      en: `### **Inactive GSTIN Restoration Guide**
+      en: `### **Inactive GST Activation Guide**
 
 **1. Explanation:**
-A GSTIN becomes inactive (suspended) if tax returns are not filed for consecutive 6 months (composition schemes: 2 tax periods).
+If GST returns are not filed for 6 consecutive months, the GSTIN is suspended or cancelled by the department.
 
-**2. Revocation Steps:**
-- File all pending GSTR-1 and GSTR-3B tax returns along with due late fees.
-- Submit a formal Application for Revocation of Cancellation of Registration on the GST portal (Form GST REG-21) within 90 days of suspension.
-- The tax officer will verify the filings and issue REG-22 to reactivate.
+**2. Activation Steps:**
+- File all pending GSTR-1 and GSTR-3B returns along with interest and late fees.
+- Submit the application for revocation of cancellation (Form GST REG-21) on the GST portal.
+- The tax officer will verify the application and reactivate the GSTIN.
 
 **3. Risks of Non-compliance:**
-- **ITC (Input Tax Credit) blockage** for your customers, causing loss of business.
-- A flat penalty of **₹10,000** or 10% of tax due.
-- Risk of permanent cancellation and legal prosecution.
+- Your buyers will not get Input Tax Credit (ITC) for purchases made from you.
+- Fines up to **₹10,000** or 10% of the tax due (whichever is higher).
 
 **4. Required Documents:**
-- REG-21 Revocation request submission copy.
-- Payment proof of all pending taxes and late fee challans.
-- Business PAN and address verification.`,
-      
-      hi: `### **निष्क्रिय जीएसटी पुनर्स्थापना गाइड**
+- Copy of Form GST REG-21 application.
+- Challan payment proofs for all pending taxes, late fees, and penalties.`,
+
+      hi: `### **निष्क्रिय जीएसटी सक्रियकरण गाइड**
 
 **1. विवरण:**
-लगातार 6 महीने तक जीएसटी रिटर्न फाइल न करने पर आपका जीएसटी पंजीकरण निलंबित (Inactive) कर दिया जाता है।
+लगातार 6 महीने तक जीएसटी रिटर्न दाखिल न करने पर आपका जीएसटी पंजीकरण निलंबित या रद्द किया जा सकता है।
 
-**2. पुनर्स्थापना के चरण:**
-- सभी लंबित GSTR-1 और GSTR-3B रिटर्न जुर्माने के साथ दाखिल करें।
-- निलंबन के 90 दिनों के भीतर जीएसटी पोर्टल पर 'Application for Revocation' (Form GST REG-21) जमा करें।
-- अधिकारी जांच के बाद पंजीकरण बहाल करेंगे।
+**2. सक्रिय करने के चरण:**
+- लंबित सभी रिटर्न (GSTR-1 और GSTR-3B) विलंब शुल्क और ब्याज के साथ फाइल करें।
+- जीएसटी पोर्टल पर REG-21 एप्लिकेशन जमा करें।
+- अधिकारी के सत्यापन के बाद आपका जीएसटी फिर से सक्रिय हो जाएगा।
 
-**3. गैर-अनुपालन के जोखिम:**
+**3. जोखिम और दंड:**
 - आपके ग्राहकों का इनपुट टैक्स क्रेडिट (ITC) ब्लॉक हो जाएगा।
 - **₹10,000** या कर देयता का 10% जुर्माना।
 
-**4. आवश्यक दस्तावेज़:**
+**4. आवश्यक दस्तावेज:**
 - REG-21 आवेदन पत्र।
 - लंबित करों और विलंब शुल्क के भुगतान का प्रमाण (Challans)।`,
 
@@ -362,7 +362,7 @@ A GSTIN becomes inactive (suspended) if tax returns are not filed for consecutiv
       ta: `### **செயலிழந்த ஜிஎஸ்டி புதுப்பிப்பு வழிகாட்டி**
 
 **1. விளக்கம்:**
-தொடர்ந்து 6 மாதங்கள் ஜிஎஸ்டி ரிட்டன் தாக்கல் செய்யாவிட்டால் ஜிஎஸ்டி பதிவு தற்காலிகமாக ರದ್ದು (Suspended) செய்யப்படும்.
+தொடர்ந்து 6 மாதங்கள் ஜிஎஸ்டி ரிட்டன் தாக்கல் செய்யாவிட்டால் ஜிஎஸ்டி பதிவு தற்காலிகமாக ரத்து (Suspended) செய்யப்படும்.
 
 **2. திரும்பப் பெறும் படிகள்:**
 - நிலுவையில் உள்ள GSTR-1 மற்றும் GSTR-3B படிவங்களை அபராதத்துடன் தாக்கல் செய்யவும்.
@@ -370,7 +370,7 @@ A GSTIN becomes inactive (suspended) if tax returns are not filed for consecutiv
 - அதிகாரி சரிபார்த்த பின் ஜிஎஸ்டி மீண்டும் செயல்பாட்டிற்கு வரும்.
 
 **3. காலாவதி அபாயங்கள்:**
-- உங்கள் வாடிக்கையாளர்களுக்கு இன்புட் டேக்ஸ் கிரெடிட் (ITC) கிடைக்காது.
+- உங்கள் வாடிக்கையாளர்களுக்கு இன்புட் டேக்స్ கிரெடிட் (ITC) கிடைக்காது.
 - **₹10,000** அல்லது வரித் தொகையில் 10% அபராதம் விதிக்கப்படும்.
 
 **4. தேவையான ஆவணங்கள்:**

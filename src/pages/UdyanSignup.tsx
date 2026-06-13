@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
-import { Link } from 'react-router-dom';
-import { Eye, EyeOff, Lock, Mail, User } from 'lucide-react';
+import { Link, useNavigate } from 'react-router-dom';
+import { Eye, EyeOff, Lock, Mail, User, AlertCircle } from 'lucide-react';
+import { apiSignup } from '../utils/udyanStorage';
 
 const LogoIcon: React.FC<{ className?: string }> = ({ className = 'w-8 h-8' }) => (
   <svg
@@ -85,16 +86,75 @@ const AuthShell: React.FC<{ children: React.ReactNode; title: string; descriptio
 );
 
 const SignupPage: React.FC = () => {
+  const navigate = useNavigate();
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
 
-  const handleSubmit = (event: React.FormEvent) => {
+  // Form states
+  const [fullName, setFullName] = useState('');
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
+  const [confirmPassword, setConfirmPassword] = useState('');
+  const [agreeTerms, setAgreeTerms] = useState(false);
+
+  // Status states
+  const [errorMsg, setErrorMsg] = useState('');
+  const [loading, setLoading] = useState(false);
+
+  const handleSubmit = async (event: React.FormEvent) => {
     event.preventDefault();
+    setErrorMsg('');
+
+    // Validations
+    if (!fullName.trim()) {
+      setErrorMsg('Full Name is required.');
+      return;
+    }
+
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(email)) {
+      setErrorMsg('Please enter a valid email address.');
+      return;
+    }
+
+    if (password.length < 6) {
+      setErrorMsg('Password must be at least 6 characters long.');
+      return;
+    }
+
+    if (password !== confirmPassword) {
+      setErrorMsg('Passwords do not match.');
+      return;
+    }
+
+    if (!agreeTerms) {
+      setErrorMsg('You must agree to the Terms and Privacy Policy.');
+      return;
+    }
+
+    setLoading(true);
+
+    try {
+      await apiSignup(email, password, fullName);
+      // Success - Redirect to Identity Verification
+      navigate('/udyan/identity');
+    } catch (err: any) {
+      setErrorMsg(err.message || 'Failed to register. Please try again.');
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
     <AuthShell title="Create account" description="Sign up for Udyam-AI in seconds.">
       <form onSubmit={handleSubmit} className="rounded-[2rem] bg-[#E7E4EE] border border-[#D9D2F0] shadow-xl p-6 md:p-8">
+        {errorMsg && (
+          <div className="mb-5 p-4 bg-red-50 border border-red-200 rounded-2xl flex gap-3 items-center text-red-700">
+            <AlertCircle className="w-5 h-5 text-red-600 shrink-0" />
+            <span className="text-sm font-semibold">{errorMsg}</span>
+          </div>
+        )}
+
         <div className="space-y-5">
           <div>
             <label htmlFor="name" className="block text-sm font-medium text-[#4B4963] mb-2">
@@ -105,8 +165,11 @@ const SignupPage: React.FC = () => {
               <input
                 id="name"
                 type="text"
+                value={fullName}
+                onChange={(e) => setFullName(e.target.value)}
                 placeholder="Your name"
                 className="w-full pl-12 pr-4 py-3.5 rounded-2xl bg-[#F4F2F7] border border-[#BFB7E3] text-[#0D0D0D] placeholder:text-[#A79FD8] focus:outline-none focus:ring-2 focus:ring-[#7E78B5] focus:border-transparent"
+                required
               />
             </div>
           </div>
@@ -120,8 +183,11 @@ const SignupPage: React.FC = () => {
               <input
                 id="email"
                 type="email"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
                 placeholder="you@example.com"
                 className="w-full pl-12 pr-4 py-3.5 rounded-2xl bg-[#F4F2F7] border border-[#BFB7E3] text-[#0D0D0D] placeholder:text-[#A79FD8] focus:outline-none focus:ring-2 focus:ring-[#7E78B5] focus:border-transparent"
+                required
               />
             </div>
           </div>
@@ -135,8 +201,11 @@ const SignupPage: React.FC = () => {
               <input
                 id="password"
                 type={showPassword ? 'text' : 'password'}
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
                 placeholder="Create a password"
                 className="w-full pl-12 pr-12 py-3.5 rounded-2xl bg-[#F4F2F7] border border-[#BFB7E3] text-[#0D0D0D] placeholder:text-[#A79FD8] focus:outline-none focus:ring-2 focus:ring-[#7E78B5] focus:border-transparent"
+                required
               />
               <button
                 type="button"
@@ -158,8 +227,11 @@ const SignupPage: React.FC = () => {
               <input
                 id="confirmPassword"
                 type={showConfirmPassword ? 'text' : 'password'}
+                value={confirmPassword}
+                onChange={(e) => setConfirmPassword(e.target.value)}
                 placeholder="Confirm your password"
                 className="w-full pl-12 pr-12 py-3.5 rounded-2xl bg-[#F4F2F7] border border-[#BFB7E3] text-[#0D0D0D] placeholder:text-[#A79FD8] focus:outline-none focus:ring-2 focus:ring-[#7E78B5] focus:border-transparent"
+                required
               />
               <button
                 type="button"
@@ -175,6 +247,8 @@ const SignupPage: React.FC = () => {
           <label className="flex items-start gap-2 text-sm text-[#4B4963] cursor-pointer select-none">
             <input
               type="checkbox"
+              checked={agreeTerms}
+              onChange={(e) => setAgreeTerms(e.target.checked)}
               className="mt-0.5 w-4 h-4 rounded border-[#BFB7E3] text-[#7E78B5] focus:ring-[#7E78B5]"
             />
             <span>
@@ -192,9 +266,17 @@ const SignupPage: React.FC = () => {
 
           <button
             type="submit"
-            className="w-full py-3.5 rounded-2xl bg-[#0D0D0D] text-[#F4F2F7] text-base font-semibold hover:bg-[#4B4963] transition-colors"
+            disabled={loading}
+            className="w-full py-3.5 rounded-2xl bg-[#0D0D0D] text-[#F4F2F7] text-base font-semibold hover:bg-[#4B4963] transition-colors flex justify-center items-center gap-2 disabled:bg-gray-600"
           >
-            Create account
+            {loading ? (
+              <>
+                <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin" />
+                Creating account...
+              </>
+            ) : (
+              'Create account'
+            )}
           </button>
         </div>
 

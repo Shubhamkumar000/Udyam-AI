@@ -156,10 +156,22 @@ const UdyanScanner: React.FC = () => {
       setRawText(text);
 
       setStatusMessage('Funnels parsing to Sarvam AI pipeline...');
-      await new Promise(r => setTimeout(r, 1500)); // Simulate Sarvam NLP latency
 
-      // Parse fields based on regex and keyword checks on rawText
+      // Determine license type from OCR text
       let license_type: ExtractedData['license_type'] = 'FSSAI';
+      const uppercaseText = text.toUpperCase();
+      if (uppercaseText.includes('GST') || uppercaseText.includes('REGISTRATION NUMBER (GSTIN)')) {
+        license_type = 'GST';
+      } else if (uppercaseText.includes('MAHANAGARA PALIKE') || uppercaseText.includes('TRADE LICENSE')) {
+        license_type = 'Trade License';
+      } else if (uppercaseText.includes('FIRE') || uppercaseText.includes('FIRE NOC')) {
+        license_type = 'Fire NOC';
+      } else if (uppercaseText.includes('LABOUR') || uppercaseText.includes('ESTABLISHMENT')) {
+        license_type = 'Shop & Establishment';
+      } else {
+        license_type = 'FSSAI';
+      }
+
       let license_number = '';
       let business_name = 'Spice Route Restaurant';
       let owner_name = 'Rahul Sharma';
@@ -168,34 +180,45 @@ const UdyanScanner: React.FC = () => {
       let authority = 'Government Authority';
       let confidence_score = parseFloat((ret.data.confidence / 100).toFixed(2));
 
-      const uppercaseText = text.toUpperCase();
-
-      if (uppercaseText.includes('GST') || uppercaseText.includes('REGISTRATION NUMBER (GSTIN)')) {
-        license_type = 'GST';
+      // Defaults based on type
+      if (license_type === 'GST') {
+        license_number = '29ABCDE1234F1Z5';
         authority = 'Central Board of Indirect Taxes and Customs (CBIC)';
-        const gstinMatch = text.match(/[0-9]{2}[A-Z]{5}[0-9]{4}[A-Z]{1}[1-9A-Z]{1}Z[0-9A-Z]{1}/);
-        license_number = gstinMatch ? gstinMatch[0] : '29ABCDE1234F1Z5';
         issue_date = '2021-06-15';
         expiry_date = '2028-06-14';
-      } else if (uppercaseText.includes('MAHANAGARA PALIKE') || uppercaseText.includes('TRADE LICENSE')) {
-        license_type = 'Trade License';
-        authority = 'Bruhat Bengaluru Mahanagara Palike (BBMP)';
-        const tradeMatch = text.match(/TL-KAR-[0-9]{4}-[0-9]{4}/);
-        license_number = tradeMatch ? tradeMatch[0] : 'TL-KAR-2024-8972';
-        issue_date = '2024-03-25';
-        expiry_date = '2026-06-28'; // June 28, 2026 (Expiring soon relative to June 13, 2026)
-      } else if (uppercaseText.includes('FOOD SAFETY') || uppercaseText.includes('FSSAI')) {
-        license_type = 'FSSAI';
+      } else if (license_type === 'FSSAI') {
+        license_number = '21224009000123';
         authority = 'Food Safety and Standards Authority of India (FSSAI)';
-        const fssaiMatch = text.match(/[0-9]{14}/);
-        license_number = fssaiMatch ? fssaiMatch[0] : '21224009000123';
         issue_date = '2023-01-10';
         expiry_date = '2027-01-09';
-      } else {
-        // General text fallback
-        license_type = 'FSSAI';
-        license_number = '21224009000123';
-        authority = 'Food Safety & Licensing Division';
+      } else if (license_type === 'Trade License') {
+        license_number = 'TL-KAR-2024-8972';
+        authority = 'Bruhat Bengaluru Mahanagara Palike (BBMP)';
+        issue_date = '2024-03-25';
+        expiry_date = '2026-06-28';
+      }
+
+      try {
+        const token = localStorage.getItem('udyan_auth_token');
+        const res = await fetch('http://localhost:5000/api/ai-extract-license', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${token}`
+          },
+          body: JSON.stringify({ rawText: text, licenseType: license_type })
+        });
+        if (res.ok) {
+          const result = await res.json();
+          license_number = result.licenseNumber;
+          business_name = result.businessName;
+          owner_name = result.ownerName;
+          issue_date = result.issueDate;
+          expiry_date = result.expiryDate;
+          authority = result.authority;
+        }
+      } catch (err) {
+        console.error('Failed to run backend Sarvam AI scanner extraction:', err);
       }
 
       setExtractedData({
@@ -271,7 +294,7 @@ const UdyanScanner: React.FC = () => {
     
     // Save to our controller
     const mockPortalUrl = 
-      extractedData.license_type === 'FSSAI' ? 'https://foscos.fssai.gov.in/' :
+      extractedData.license_type === 'FSSAI' ? 'https://foodlicenseportal.org/Home/renew?gad_source=1&gad_campaignid=23038392925&gbraid=0AAAAACzocouD9ojWtNfBiCtpWM2iev4Kp&gclid=Cj0KCQjw_7PRBhDcARIsAMjV7jnDkAkl_H_guWUD_Spud_xBdQ1LIoXh2ZWCh0R9HprCRjXePuHlHIcaAj4YEALw_wcB' :
       extractedData.license_type === 'GST' ? 'https://services.gst.gov.in/services/login' :
       extractedData.license_type === 'Trade License' ? 'https://bbmp.gov.in' :
       'https://india.gov.in';

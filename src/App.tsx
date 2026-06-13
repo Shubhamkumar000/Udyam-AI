@@ -1,5 +1,5 @@
 import React from 'react';
-import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
+import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
 import UdyanLanding from './pages/UdyanLanding';
 import UdyanLogin from './pages/UdyanLogin';
 import UdyanSignup from './pages/UdyanSignup';
@@ -8,6 +8,19 @@ import UdyanScanner from './pages/UdyanScanner';
 import UdyanChat from './pages/UdyanChat';
 import UdyanProfile from './pages/UdyanProfile';
 import UdyanExtension from './pages/UdyanExtension';
+import UdyanIdentity from './pages/UdyanIdentity';
+import UdyanOnboarding from './pages/UdyanOnboarding';
+import UdyanUploadLicenses from './pages/UdyanUploadLicenses';
+import { getToken } from './utils/udyanStorage';
+
+// Authentication Guard Component
+const ProtectedRoute: React.FC<{ children: React.ReactNode }> = ({ children }) => {
+  const token = getToken();
+  if (!token) {
+    return <Navigate to="/login" replace />;
+  }
+  return <>{children}</>;
+};
 
 const App: React.FC = () => {
   return (
@@ -18,12 +31,74 @@ const App: React.FC = () => {
         <Route path="/login" element={<UdyanLogin />} />
         <Route path="/signup" element={<UdyanSignup />} />
 
-        {/* Udyan AI Compliance Dashboard Routes */}
-        <Route path="/udyan" element={<UdyanDashboard />} />
-        <Route path="/udyan/scanner" element={<UdyanScanner />} />
-        <Route path="/udyan/chat" element={<UdyanChat />} />
-        <Route path="/udyan/profile" element={<UdyanProfile />} />
-        <Route path="/udyan/extension" element={<UdyanExtension />} />
+        {/* Protected Udyan AI Workspace Routes */}
+        <Route 
+          path="/udyan" 
+          element={
+            <ProtectedRoute>
+              <UdyanDashboard />
+            </ProtectedRoute>
+          } 
+        />
+        <Route 
+          path="/udyan/identity" 
+          element={
+            <ProtectedRoute>
+              <UdyanIdentity />
+            </ProtectedRoute>
+          } 
+        />
+        <Route 
+          path="/udyan/onboarding" 
+          element={
+            <ProtectedRoute>
+              <UdyanOnboarding />
+            </ProtectedRoute>
+          } 
+        />
+        <Route 
+          path="/udyan/upload-licenses" 
+          element={
+            <ProtectedRoute>
+              <UdyanUploadLicenses />
+            </ProtectedRoute>
+          } 
+        />
+        <Route 
+          path="/udyan/scanner" 
+          element={
+            <ProtectedRoute>
+              <UdyanScanner />
+            </ProtectedRoute>
+          } 
+        />
+        <Route 
+          path="/udyan/chat" 
+          element={
+            <ProtectedRoute>
+              <UdyanChat />
+            </ProtectedRoute>
+          } 
+        />
+        <Route 
+          path="/udyan/profile" 
+          element={
+            <ProtectedRoute>
+              <UdyanProfile />
+            </ProtectedRoute>
+          } 
+        />
+        <Route 
+          path="/udyan/extension" 
+          element={
+            <ProtectedRoute>
+              <UdyanExtension />
+            </ProtectedRoute>
+          } 
+        />
+
+        {/* Fallback Catch-All */}
+        <Route path="*" element={<Navigate to="/" replace />} />
       </Routes>
     </Router>
   );

@@ -109,7 +109,7 @@ CREATE TABLE compliance_scores (
 -- Insert Default Portal Metadata
 INSERT INTO portal_links (license_type, portal_name, official_url, notes) VALUES
 ('GST', 'GST Portal', 'https://services.gst.gov.in/services/login', 'Filing of GSTR-1, GSTR-3B and revocations'),
-('FSSAI', 'FoSCoS Food Safety Portal', 'https://foscos.fssai.gov.in/', 'FSSAI basic registrations, state, and central licenses'),
+('FSSAI', 'Food License Portal', 'https://foodlicenseportal.org/Home/renew?gad_source=1&gad_campaignid=23038392925&gbraid=0AAAAACzocouD9ojWtNfBiCtpWM2iev4Kp&gclid=Cj0KCQjw_7PRBhDcARIsAMjV7jnDkAkl_H_guWUD_Spud_xBdQ1LIoXh2ZWCh0R9HprCRjXePuHlHIcaAj4YEALw_wcB', 'FSSAI registrations and renewals portal'),
 ('Trade License', 'Karnataka Municipal Portal', 'https://bbmp.gov.in', 'Bruhat Bengaluru Mahanagara Palike trade license renewals'),
 ('Shop & Establishment', 'e-Karmika Karnataka', 'https://ekarmika.karnataka.gov.in/', 'Shop & establishment renewal registrations'),
 ('Fire NOC', 'Karnataka Fire & Emergency Services', 'https://kfireservices.gov.in/', 'No Objection Certificate approvals and safety audits');
