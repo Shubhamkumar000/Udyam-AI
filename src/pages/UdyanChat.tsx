@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { Send, Sparkles, Languages, ArrowRight } from 'lucide-react';
 import Sidebar from '../components/Udyan/Sidebar';
-
+// rag for chat +rag integration
 type Lang = 'en' | 'hi' | 'kn' | 'te' | 'ta';
 
 interface QuickQuestion {
