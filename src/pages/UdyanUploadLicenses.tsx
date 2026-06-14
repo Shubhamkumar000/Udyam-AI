@@ -12,7 +12,7 @@ import {
   X
 } from 'lucide-react';
 import { createWorker } from 'tesseract.js';
-import { getOnboarding, saveLicense, getLicenses } from '../utils/udyanStorage';
+import { getOnboarding, saveLicense, getLicenses, API_BASE } from '../utils/udyanStorage';
 import type { License } from '../utils/udyanStorage';
 import confetti from 'canvas-confetti';
 
@@ -162,7 +162,7 @@ const UdyanUploadLicenses: React.FC = () => {
 
       try {
         const token = localStorage.getItem('udyan_auth_token');
-        const res = await fetch('http://localhost:5000/api/ai-extract-license', {
+        const res = await fetch(`${API_BASE}/ai-extract-license`, {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',

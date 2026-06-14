@@ -23,7 +23,7 @@ const LicenseRiskCard: React.FC<LicenseRiskCardProps> = ({ assessment, missing, 
     <motion.div
       initial={{ opacity: 0, y: 12 }}
       animate={{ opacity: 1, y: 0 }}
-      transition={{ delay: index * 0.06, type: 'spring', stiffness: 260, damping: 24 }}
+      transition={{ delay: index * 0.05, duration: 0.4, ease: [0.22, 1, 0.36, 1] }}
       className="bg-white border border-gray-200 rounded-2xl p-5 shadow-sm hover:shadow-md transition-shadow"
     >
       <div className="flex items-start justify-between gap-3 mb-4">

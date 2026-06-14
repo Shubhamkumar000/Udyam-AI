@@ -3,7 +3,7 @@ import { ArrowRight, LogOut } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import { getToken, removeToken } from '../utils/udyanStorage';
-import { fadeIn, fadeInUp, scaleIn, slideInLeft, slideInRight, staggerContainer, staggerFast, hoverLift, tapScale, viewportOnce } from '../utils/animations';
+import { fadeIn, fadeInUp, scaleIn, slideInLeft, slideInRight, staggerContainer, staggerFast, viewportOnce } from '../utils/animations';
 import GlowButton from '../components/Udyan/GlowButton';
 export const LogoIcon: React.FC<{ className?: string }> = ({ className = "w-7 h-7" }) => {
   return (
@@ -57,17 +57,17 @@ const UdyanLanding: React.FC = () => {
         
         {/* Navbar */}
         <motion.nav
-          initial={{ y: -24, opacity: 0 }}
+          initial={{ y: -12, opacity: 0 }}
           animate={{ y: 0, opacity: 1 }}
-          transition={{ duration: 0.6, ease: [0.22, 1, 0.36, 1] }}
+          transition={{ duration: 0.5, ease: [0.22, 1, 0.36, 1] }}
           className="absolute top-0 left-0 right-0 z-20 px-6 py-5 bg-transparent"
         >
           <div className="max-w-[88rem] mx-auto flex items-center justify-between">
             {/* Left */}
             <motion.div
               className="flex items-center gap-2"
-              whileHover={{ scale: 1.02 }}
-              transition={{ type: 'spring', stiffness: 400 }}
+              whileHover={{ scale: 1.01 }}
+              transition={{ duration: 0.2 }}
             >
               <LogoIcon className="w-7 h-7 text-black" />
               <span className="text-2xl font-medium tracking-tight text-black font-norms">Udyam AI</span>
@@ -153,9 +153,9 @@ const UdyanLanding: React.FC = () => {
             {/* Content Overlay */}
             <div className="relative z-10 flex flex-col items-start justify-start h-full p-8 md:p-12 pt-32 md:pt-36 bg-gradient-to-r from-white/30 to-transparent">
               <motion.h1
-                initial={{ opacity: 0, y: 48 }}
+                initial={{ opacity: 0, y: 24 }}
                 animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.75, delay: 0.15, ease: [0.22, 1, 0.36, 1] }}
+                transition={{ duration: 0.6, delay: 0.1, ease: [0.22, 1, 0.36, 1] }}
                 className="text-black text-5xl md:text-7xl font-semibold leading-tight max-w-xl mb-4 font-norms"
                 style={{ letterSpacing: '-0.04em', whiteSpace: 'pre-line' }}
               >
@@ -163,9 +163,9 @@ const UdyanLanding: React.FC = () => {
               </motion.h1>
               
               <motion.p
-                initial={{ opacity: 0, y: 32 }}
+                initial={{ opacity: 0, y: 16 }}
                 animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.65, delay: 0.35, ease: [0.22, 1, 0.36, 1] }}
+                transition={{ duration: 0.5, delay: 0.25, ease: [0.22, 1, 0.36, 1] }}
                 className="text-black/80 text-base md:text-lg max-w-md mb-8 leading-relaxed"
                 style={{ fontFamily: "'Inter', ui-sans-serif, system-ui, sans-serif" }}
               >
@@ -174,21 +174,20 @@ const UdyanLanding: React.FC = () => {
 
               {/* CTA button */}
               <motion.div
-                initial={{ opacity: 0, y: 24, scale: 0.95 }}
-                animate={{ opacity: 1, y: 0, scale: 1 }}
-                transition={{ duration: 0.55, delay: 0.5, type: 'spring', stiffness: 200 }}
-                className="mb-8"
+                initial={{ opacity: 0, y: 16 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.5, delay: 0.45, ease: [0.22, 1, 0.36, 1] }}
+                className="mb-6"
               >
-                <GlowButton to="/udyan" variant="outline" className="text-base md:text-lg pl-8 pr-2 py-2 shadow-lg gap-3">
+                <Link
+                  to="/udyan"
+                  className="inline-flex items-center gap-2.5 bg-black text-white text-sm md:text-base font-medium pl-5 pr-1.5 py-1.5 rounded-full hover:bg-gray-900 transition-colors duration-300 shadow-md btn-glow-outline"
+                >
                   Try Udyam AI
-                  <motion.span
-                    className="bg-white rounded-full p-2 text-black"
-                    animate={{ x: [0, 4, 0] }}
-                    transition={{ duration: 1.8, repeat: Infinity, ease: 'easeInOut' }}
-                  >
-                    <ArrowRight className="w-5 h-5 text-black" />
-                  </motion.span>
-                </GlowButton>
+                  <span className="bg-white rounded-full p-1.5 flex items-center justify-center">
+                    <ArrowRight className="w-4 h-4 text-black" />
+                  </span>
+                </Link>
               </motion.div>
 
               {/* Brand Marquee */}
@@ -230,10 +229,10 @@ const UdyanLanding: React.FC = () => {
               <h2 className="text-black text-5xl md:text-6xl font-semibold leading-tight mb-8 tracking-tight font-norms" style={{ letterSpacing: '-0.03em' }}>
                 Meet Udyam AI.
               </h2>
-              <GlowButton to="/udyan" variant="outline" className="text-base pl-7 pr-2 py-2 gap-3">
+              <GlowButton to="/udyan" variant="outline" className="text-sm pl-5 pr-1.5 py-1.5 gap-2">
                 Discover dashboard
-                <span className="bg-white rounded-full p-1.5 text-black">
-                  <ArrowRight className="w-4 h-4" />
+                <span className="bg-white rounded-full p-1 flex items-center justify-center">
+                  <ArrowRight className="w-3.5 h-3.5 text-black" />
                 </span>
               </GlowButton>
             </motion.div>
@@ -260,8 +259,7 @@ const UdyanLanding: React.FC = () => {
             {/* Card 1 (spans 2 cols on lg) */}
             <motion.div
               variants={scaleIn}
-              whileHover={{ scale: 1.02, y: -4 }}
-              transition={{ type: 'spring', stiffness: 300, damping: 22 }}
+              whileHover={{ y: -3, transition: { duration: 0.25 } }}
               className="sm:col-span-2 rounded-2xl overflow-hidden min-h-80 flex flex-col justify-between p-8 text-black relative group shadow-sm border border-gray-200"
               style={{
                 backgroundImage: `url('https://images.higgs.ai/?default=1&output=webp&url=https%3A%2F%2Fd8j0ntlcm91z4.cloudfront.net%2Fuser_38xzZboKViGWJOttwIXH07lWA1P%2Fhf_20260423_164207_f243351d-ed59-48ec-83a0-a5e996bdbe3c.png&w=1280&q=85')`,
@@ -286,8 +284,7 @@ const UdyanLanding: React.FC = () => {
             {/* Card 2 */}
             <motion.div
               variants={fadeInUp}
-              whileHover={{ scale: 1.03, y: -6 }}
-              transition={{ type: 'spring', stiffness: 300, damping: 20 }}
+              whileHover={{ y: -3, transition: { duration: 0.25 } }}
               className="bg-[#2B2644] rounded-2xl p-8 min-h-80 flex flex-col justify-between shadow-lg text-white"
             >
               <div>
@@ -305,8 +302,7 @@ const UdyanLanding: React.FC = () => {
             {/* Card 3 */}
             <motion.div
               variants={fadeInUp}
-              whileHover={{ scale: 1.03, y: -6 }}
-              transition={{ type: 'spring', stiffness: 300, damping: 20 }}
+              whileHover={{ y: -3, transition: { duration: 0.25 } }}
               className="bg-[#2B2644] rounded-2xl p-8 min-h-80 flex flex-col justify-between shadow-lg text-white"
             >
               <div>
@@ -391,8 +387,8 @@ const UdyanLanding: React.FC = () => {
             initial="hidden"
             whileInView="visible"
             viewport={viewportOnce}
-            whileHover={{ scale: 1.01 }}
-            transition={{ type: 'spring', stiffness: 200, damping: 25 }}
+            whileHover={{ y: -2 }}
+            transition={{ duration: 0.3, ease: [0.22, 1, 0.36, 1] }}
             className="relative rounded-3xl overflow-hidden min-h-[500px] md:min-h-[720px] flex flex-col justify-end p-8 md:p-12 shadow-lg"
           >
             
@@ -435,8 +431,9 @@ const UdyanLanding: React.FC = () => {
                 className="inline-flex items-center gap-3 text-white font-medium group"
               >
                 <motion.span
-                  className="w-9 h-9 rounded-full bg-white/20 backdrop-blur flex items-center justify-center btn-glow-secondary ring-2 ring-white/30"
-                  whileHover={{ scale: 1.1, boxShadow: '0 0 24px rgba(255,255,255,0.4)' }}
+                  className="w-9 h-9 rounded-full bg-white/20 backdrop-blur flex items-center justify-center ring-2 ring-white/30"
+                  whileHover={{ scale: 1.05 }}
+                  transition={{ duration: 0.2 }}
                 >
                   <ArrowRight className="w-4 h-4 text-white" />
                 </motion.span>

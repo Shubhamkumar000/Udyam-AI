@@ -68,7 +68,8 @@ export interface ComplianceProfile {
   recommended_actions: string[];
 }
 
-const API_BASE = "http://localhost:5000/api";
+const API_ROOT = (import.meta.env.VITE_API_URL || 'http://localhost:5000').replace(/\/$/, '');
+export const API_BASE = `${API_ROOT}/api`;
 
 // JWT Helper Functions
 export const getToken = (): string | null => localStorage.getItem('udyan_auth_token');

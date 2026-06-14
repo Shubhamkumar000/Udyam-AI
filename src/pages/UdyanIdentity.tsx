@@ -12,7 +12,7 @@ import {
   ArrowRight
 } from 'lucide-react';
 import { createWorker } from 'tesseract.js';
-import { uploadIdentityDocs } from '../utils/udyanStorage';
+import { uploadIdentityDocs, API_BASE } from '../utils/udyanStorage';
 import confetti from 'canvas-confetti';
 
 const LogoIcon: React.FC<{ className?: string }> = ({ className = "w-6 h-6" }) => (
@@ -155,7 +155,7 @@ const UdyanIdentity: React.FC = () => {
 
       try {
         const token = localStorage.getItem('udyan_auth_token');
-        const res = await fetch('http://localhost:5000/api/ai-extract-identity', {
+        const res = await fetch(`${API_BASE}/ai-extract-identity`, {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',

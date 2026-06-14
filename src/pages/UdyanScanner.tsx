@@ -10,7 +10,7 @@ import {
   Sparkles
 } from 'lucide-react';
 import { createWorker } from 'tesseract.js';
-import { saveLicense } from '../utils/udyanStorage';
+import { saveLicense, API_BASE } from '../utils/udyanStorage';
 import Sidebar from '../components/Udyan/Sidebar';
 import { useNavigate } from 'react-router-dom';
 import confetti from 'canvas-confetti';
@@ -200,7 +200,7 @@ const UdyanScanner: React.FC = () => {
 
       try {
         const token = localStorage.getItem('udyan_auth_token');
-        const res = await fetch('http://localhost:5000/api/ai-extract-license', {
+        const res = await fetch(`${API_BASE}/ai-extract-license`, {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',

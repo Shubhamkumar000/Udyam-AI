@@ -22,10 +22,12 @@ const MONGODB_URI = process.env.MONGODB_URI || 'mongodb://127.0.0.1:27017/udyam_
 app.use(cors());
 app.use(express.json());
 
-// Set up local file uploads
-const uploadsDir = path.join(__dirname, 'uploads');
+// Set up file uploads (/tmp on Vercel serverless, local folder otherwise)
+const uploadsDir = process.env.VERCEL
+  ? path.join('/tmp', 'udyan-uploads')
+  : path.join(__dirname, 'uploads');
 if (!fs.existsSync(uploadsDir)) {
-  fs.mkdirSync(uploadsDir);
+  fs.mkdirSync(uploadsDir, { recursive: true });
 }
 app.use('/uploads', express.static(uploadsDir));
 
@@ -42,10 +44,23 @@ const storage = multer.diskStorage({
 const upload = multer({ storage });
 const { analyzeComplianceRisk, analyzeSingleLicense } = require('./riskEngine');
 
-// Connect to MongoDB
-mongoose.connect(MONGODB_URI)
-  .then(() => console.log('Successfully connected to MongoDB database.'))
-  .catch(err => console.error('MongoDB database connection error:', err));
+// Connect to MongoDB (reuse connection on Vercel serverless cold starts)
+async function connectDB() {
+  if (mongoose.connection.readyState >= 1) return;
+  await mongoose.connect(MONGODB_URI);
+  console.log('Successfully connected to MongoDB database.');
+}
+
+connectDB().catch((err) => console.error('MongoDB database connection error:', err));
+
+app.use(async (req, res, next) => {
+  try {
+    await connectDB();
+    next();
+  } catch (err) {
+    res.status(503).json({ error: 'Database unavailable', details: err.message });
+  }
+});
 
 // ==========================================
 // MONGOOSE SCHEMAS & MODELS
@@ -1071,10 +1086,30 @@ app.get('/api/portal-links', (req, res) => {
   ]);
 });
 
-// Boot server
-app.listen(PORT, () => {
-  console.log(`===================================================`);
-  console.log(`  UDYAMAI MONGO-API SERVER - RUNNING SUCCESS       `);
-  console.log(`  Local Address: http://localhost:${PORT}           `);
-  console.log(`===================================================`);
+// Health checks
+app.get('/', (req, res) => {
+  res.json({
+    status: 'ok',
+    service: 'Udyam AI API',
+    mongodb: mongoose.connection.readyState === 1 ? 'connected' : 'disconnected',
+  });
 });
+
+app.get('/api/health', (req, res) => {
+  res.json({
+    status: 'ok',
+    mongodb: mongoose.connection.readyState === 1 ? 'connected' : 'disconnected',
+  });
+});
+
+module.exports = app;
+
+// Local dev only — Vercel imports the app as a serverless handler
+if (!process.env.VERCEL) {
+  app.listen(PORT, () => {
+    console.log(`===================================================`);
+    console.log(`  UDYAMAI MONGO-API SERVER - RUNNING SUCCESS       `);
+    console.log(`  Local Address: http://localhost:${PORT}           `);
+    console.log(`===================================================`);
+  });
+}
