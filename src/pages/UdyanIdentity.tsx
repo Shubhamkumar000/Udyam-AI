@@ -1,18 +1,18 @@
 import React, { useState, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { 
-  Upload, 
-  CheckCircle2, 
-  AlertCircle, 
-  Fingerprint, 
-  CreditCard, 
+import {
+  Upload,
+  CheckCircle2,
+  AlertCircle,
+  Fingerprint,
+  CreditCard,
   Phone,
   RefreshCw,
   Sparkles,
   ArrowRight
 } from 'lucide-react';
 import { createWorker } from 'tesseract.js';
-import { uploadIdentityDocs } from '../utils/udyanStorage';
+import { uploadIdentityDocs, API_BASE } from '../utils/udyanStorage';
 import confetti from 'canvas-confetti';
 
 const LogoIcon: React.FC<{ className?: string }> = ({ className = "w-6 h-6" }) => (
@@ -110,7 +110,7 @@ const UdyanIdentity: React.FC = () => {
       setStatusMessage('Analyzing Aadhaar card layout...');
       setOcrProgress(30);
       const workerAadhaar = await createWorker('eng');
-      
+
       // We simulate OCR scanning progress or run basic recognition
       // Note: Tesseract might take time on some systems or fail for PDFs
       // So we write code that handles images or mocks results gracefully on parse error
@@ -125,7 +125,7 @@ const UdyanIdentity: React.FC = () => {
         const ret = await workerAadhaar.recognize(url);
         rawAadhaarText = ret.data.text;
         const text = ret.data.text.toUpperCase();
-        
+
         // Basic parser regex
         if (text.includes('NAME')) {
           const match = ret.data.text.match(/Name:\s*([A-Za-z\s]+)/i);
@@ -137,7 +137,7 @@ const UdyanIdentity: React.FC = () => {
 
       setOcrProgress(60);
       setStatusMessage('Analyzing PAN card layout...');
-      
+
       const workerPan = await createWorker('eng');
       if (panFile.type.startsWith('image/')) {
         const url = URL.createObjectURL(panFile);
@@ -155,7 +155,7 @@ const UdyanIdentity: React.FC = () => {
 
       try {
         const token = localStorage.getItem('udyan_auth_token');
-        const res = await fetch('http://localhost:5000/api/ai-extract-identity', {
+        const res = await fetch(`${API_BASE}/ai-extract-identity`, {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
@@ -197,7 +197,7 @@ const UdyanIdentity: React.FC = () => {
     try {
       // Call identity upload API to register details and store files
       await uploadIdentityDocs(aadhaarFile, panFile, phoneNumber, fullName, address, panNumber);
-      
+
       setSuccess(true);
       confetti({
         particleCount: 100,
@@ -286,9 +286,8 @@ const UdyanIdentity: React.FC = () => {
                 onDragLeave={(e) => handleDrag(e, 'aadhaar', false)}
                 onDrop={(e) => handleDrop(e, 'aadhaar')}
                 onClick={() => aadhaarInputRef.current?.click()}
-                className={`border-2 border-dashed rounded-2xl p-6 text-center cursor-pointer transition-all duration-200 ${
-                  aadhaarDrag ? 'border-black bg-gray-50' : 'border-gray-300 hover:border-gray-500 bg-white'
-                }`}
+                className={`border-2 border-dashed rounded-2xl p-6 text-center cursor-pointer transition-all duration-200 ${aadhaarDrag ? 'border-black bg-gray-50' : 'border-gray-300 hover:border-gray-500 bg-white'
+                  }`}
               >
                 <input
                   type="file"
@@ -329,9 +328,8 @@ const UdyanIdentity: React.FC = () => {
                 onDragLeave={(e) => handleDrag(e, 'pan', false)}
                 onDrop={(e) => handleDrop(e, 'pan')}
                 onClick={() => panInputRef.current?.click()}
-                className={`border-2 border-dashed rounded-2xl p-6 text-center cursor-pointer transition-all duration-200 ${
-                  panDrag ? 'border-black bg-gray-50' : 'border-gray-300 hover:border-gray-500 bg-white'
-                }`}
+                className={`border-2 border-dashed rounded-2xl p-6 text-center cursor-pointer transition-all duration-200 ${panDrag ? 'border-black bg-gray-50' : 'border-gray-300 hover:border-gray-500 bg-white'
+                  }`}
               >
                 <input
                   type="file"
@@ -373,7 +371,7 @@ const UdyanIdentity: React.FC = () => {
                   <span className="text-xs">{ocrProgress}%</span>
                 </div>
                 <div className="w-full bg-slate-800 rounded-full h-2">
-                  <div 
+                  <div
                     className="bg-indigo-500 h-2 rounded-full transition-all duration-300"
                     style={{ width: `${ocrProgress}%` }}
                   />

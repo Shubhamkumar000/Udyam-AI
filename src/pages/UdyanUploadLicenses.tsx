@@ -1,18 +1,18 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { 
-  Upload, 
-  FileText, 
-  CheckCircle2, 
-  AlertCircle, 
-  RefreshCw, 
-  Sparkles, 
+import {
+  Upload,
+  FileText,
+  CheckCircle2,
+  AlertCircle,
+  RefreshCw,
+  Sparkles,
   ArrowRight,
   ShieldCheck,
   X
 } from 'lucide-react';
 import { createWorker } from 'tesseract.js';
-import { getOnboarding, saveLicense, getLicenses } from '../utils/udyanStorage';
+import { getOnboarding, saveLicense, getLicenses, API_BASE } from '../utils/udyanStorage';
 import type { License } from '../utils/udyanStorage';
 import confetti from 'canvas-confetti';
 
@@ -113,7 +113,7 @@ const UdyanUploadLicenses: React.FC = () => {
 
     try {
       const worker = await createWorker('eng');
-      
+
       // Simulate OCR step stages or run text recognition if image
       setStatusMessage('Analyzing text character mappings...');
       setOcrProgress(40);
@@ -162,7 +162,7 @@ const UdyanUploadLicenses: React.FC = () => {
 
       try {
         const token = localStorage.getItem('udyan_auth_token');
-        const res = await fetch('http://localhost:5000/api/ai-extract-license', {
+        const res = await fetch(`${API_BASE}/ai-extract-license`, {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
@@ -220,19 +220,19 @@ const UdyanUploadLicenses: React.FC = () => {
         expiry_date: extractedExpiry,
         authority: extractedAuthority,
         confidence_score: 0.96,
-        portal_url: 
+        portal_url:
           extractedType === 'FSSAI' ? 'https://foodlicenseportal.org/Home/renew?gad_source=1&gad_campaignid=23038392925&gbraid=0AAAAACzocouD9ojWtNfBiCtpWM2iev4Kp&gclid=Cj0KCQjw_7PRBhDcARIsAMjV7jnDkAkl_H_guWUD_Spud_xBdQ1LIoXh2ZWCh0R9HprCRjXePuHlHIcaAj4YEALw_wcB' :
-          extractedType === 'GST' ? 'https://services.gst.gov.in/services/login' :
-          extractedType === 'Trade License' ? 'https://bbmp.gov.in' :
-          extractedType === 'Shop & Establishment' ? 'https://ekarmika.karnataka.gov.in/' :
-          extractedType === 'Fire NOC' ? 'https://kfireservices.gov.in/' :
-          'https://india.gov.in',
+            extractedType === 'GST' ? 'https://services.gst.gov.in/services/login' :
+              extractedType === 'Trade License' ? 'https://bbmp.gov.in' :
+                extractedType === 'Shop & Establishment' ? 'https://ekarmika.karnataka.gov.in/' :
+                  extractedType === 'Fire NOC' ? 'https://kfireservices.gov.in/' :
+                    'https://india.gov.in',
         id: '',
         status: 'Active' as any
       };
 
       await saveLicense(licForm, selectedFile || undefined);
-      
+
       confetti({
         particleCount: 50,
         spread: 40,
@@ -298,7 +298,7 @@ const UdyanUploadLicenses: React.FC = () => {
 
       {/* Main Upload Grid */}
       <main className="flex-1 max-w-5xl w-full mx-auto p-6 md:py-12 grid grid-cols-1 lg:grid-cols-3 gap-8">
-        
+
         {/* Left 2 Cols: Uploader lists */}
         <div className="lg:col-span-2 space-y-6">
           <div className="mb-6">
@@ -329,11 +329,10 @@ const UdyanUploadLicenses: React.FC = () => {
               const uploaded = isUploaded(type);
               const matchingLic = uploadedLicenses.find(l => l.type === type);
               return (
-                <div 
-                  key={type} 
-                  className={`bg-white border border-gray-200 rounded-2xl p-5 shadow-sm flex flex-col md:flex-row md:items-center justify-between gap-4 transition-all ${
-                    uploaded ? 'border-emerald-200 bg-emerald-50/20' : ''
-                  }`}
+                <div
+                  key={type}
+                  className={`bg-white border border-gray-200 rounded-2xl p-5 shadow-sm flex flex-col md:flex-row md:items-center justify-between gap-4 transition-all ${uploaded ? 'border-emerald-200 bg-emerald-50/20' : ''
+                    }`}
                 >
                   <div className="flex items-start gap-4">
                     <div className={`p-3 rounded-xl ${uploaded ? 'bg-emerald-50 text-emerald-600' : 'bg-gray-50 text-gray-400'}`}>
@@ -384,7 +383,7 @@ const UdyanUploadLicenses: React.FC = () => {
                 <span className="text-xs">{ocrProgress}%</span>
               </div>
               <div className="w-full bg-slate-800 rounded-full h-2">
-                <div 
+                <div
                   className="bg-indigo-500 h-2 rounded-full transition-all duration-300"
                   style={{ width: `${ocrProgress}%` }}
                 />
@@ -432,9 +431,8 @@ const UdyanUploadLicenses: React.FC = () => {
                 <span className="text-3xl font-extrabold font-norms text-black">
                   {Math.max(0, 100 - requiredList.filter(type => !isUploaded(type)).length * 15)}/100
                 </span>
-                <span className={`text-xs font-extrabold uppercase ${
-                  requiredList.filter(type => !isUploaded(type)).length === 0 ? 'text-emerald-600' : 'text-amber-600'
-                }`}>
+                <span className={`text-xs font-extrabold uppercase ${requiredList.filter(type => !isUploaded(type)).length === 0 ? 'text-emerald-600' : 'text-amber-600'
+                  }`}>
                   {requiredList.filter(type => !isUploaded(type)).length === 0 ? 'Low Risk' : 'Medium / High Risk'}
                 </span>
               </div>
@@ -459,7 +457,7 @@ const UdyanUploadLicenses: React.FC = () => {
       {showConfirm && (
         <div className="fixed inset-0 z-50 bg-black/40 backdrop-blur-sm flex items-center justify-center p-6">
           <div className="bg-white border border-gray-200 rounded-3xl p-6 md:p-8 max-w-lg w-full shadow-2xl space-y-6 relative">
-            <button 
+            <button
               type="button"
               onClick={() => setShowConfirm(false)}
               className="absolute right-6 top-6 text-gray-400 hover:text-black"

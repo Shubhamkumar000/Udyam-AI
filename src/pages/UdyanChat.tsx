@@ -479,6 +479,7 @@ A Fire No Objection Certificate (NOC) certifies that a commercial building compl
     }
   };
 
+<<<<<<< HEAD
   const startStreamingResponse = (
     responseText: string,
     sources?: Array<{ source: string; score: number }>,
@@ -631,7 +632,109 @@ I detected your query. As your Udyan AI Compliance copilot, I recommend checking
         console.error('RAG API Error:', err);
         runOfflineFallback();
       });
+=======
+  const handleSend = async (text: string) => {
+  if (!text.trim()) return;
+
+  // Add user message
+  const userMsg: ChatMessage = {
+    sender: 'user',
+    text,
+    language: selectedLang
+>>>>>>> b36f9b8b9d8556a7a4672595e696cd556afcd61f
   };
+
+  setChatHistory(prev => [...prev, userMsg]);
+  setInputMessage('');
+  setStreaming(true);
+
+  // Add empty assistant message for streaming effect
+  const streamMsg: ChatMessage = {
+    sender: 'assistant',
+    text: '',
+    language: selectedLang
+  };
+
+  setChatHistory(prev => [...prev, streamMsg]);
+
+  try {
+    const ragUrl = import.meta.env.VITE_RAG_API_BASE 
+      ? `${import.meta.env.VITE_RAG_API_BASE}/query` 
+      : "http://localhost:5002/api/query";
+
+    const response = await fetch(
+      ragUrl,
+      {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          query: text,
+          language: selectedLang
+        }),
+      }
+    );
+
+    if (!response.ok) {
+      throw new Error('Failed to fetch response');
+    }
+
+    const data = await response.json();
+
+    // Expected backend response:
+    // {
+    //   answer: "your AI generated response"
+    // }
+
+    const responseText =
+      data.answer ||
+      data.response ||
+      'No response received from AI service.';
+
+    // Streaming typing effect
+    let currentLength = 0;
+
+    const interval = setInterval(() => {
+      currentLength += 8;
+
+      if (currentLength >= responseText.length) {
+        clearInterval(interval);
+
+        setChatHistory(prev => {
+          const updated = [...prev];
+          updated[updated.length - 1].text = responseText;
+          return updated;
+        });
+
+        setStreaming(false);
+      } else {
+        setChatHistory(prev => {
+          const updated = [...prev];
+
+          updated[updated.length - 1].text =
+            responseText.slice(0, currentLength) + ' ▌';
+
+          return updated;
+        });
+      }
+    }, 20);
+
+  } catch (error) {
+    console.error('Chat API Error:', error);
+
+    setChatHistory(prev => {
+      const updated = [...prev];
+
+      updated[updated.length - 1].text =
+        'Unable to connect to the AI compliance server.';
+
+      return updated;
+    });
+
+    setStreaming(false);
+  }
+};
 
   return (
     <div className="flex bg-[#F5F5F5] min-h-screen text-black font-sans">
