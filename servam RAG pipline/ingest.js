@@ -23,6 +23,30 @@ function chunkText(text, size = 1000, overlap = 200) {
   return chunks;
 }
 
+// Utility to clean and extract plain text from HTML content
+function cleanHtml(html) {
+  // Remove script elements and their content
+  let text = html.replace(/<script[\s\S]*?<\/script>/gi, '');
+  // Remove style elements and their content
+  text = text.replace(/<style[\s\S]*?<\/style>/gi, '');
+  // Remove all other HTML tags
+  text = text.replace(/<[^>]*>/g, ' ');
+  // Decode common HTML entities
+  text = text
+    .replace(/&nbsp;/g, ' ')
+    .replace(/&amp;/g, '&')
+    .replace(/&lt;/g, '<')
+    .replace(/&gt;/g, '>')
+    .replace(/&quot;/g, '"')
+    .replace(/&#39;/g, "'");
+  // Normalize whitespace (convert multiple spaces/tabs to a single space)
+  text = text.replace(/[ \t]+/g, ' ');
+  // Normalize blank lines
+  text = text.replace(/\r/g, '');
+  text = text.replace(/\n\s*\n/g, '\n');
+  return text.trim();
+}
+
 async function main() {
   validateConfig();
   
@@ -48,7 +72,7 @@ async function main() {
   }
 
   const files = fs.readdirSync(DATA_DIR).filter(file => 
-    ['.txt', '.md', '.json'].includes(path.extname(file).toLowerCase())
+    ['.txt', '.md', '.json', '.html'].includes(path.extname(file).toLowerCase())
   );
 
   if (files.length === 0) {
@@ -100,12 +124,21 @@ async function main() {
     console.log(`\n[Ingest] Processing file: ${file}`);
     
     let content = '';
-    if (path.extname(file).toLowerCase() === '.json') {
+    const ext = path.extname(file).toLowerCase();
+    if (ext === '.json') {
       try {
         const jsonContent = JSON.parse(fs.readFileSync(filePath, 'utf8'));
         content = typeof jsonContent === 'object' ? JSON.stringify(jsonContent, null, 2) : String(jsonContent);
       } catch (e) {
         console.error(`[Ingest] Failed parsing JSON file: ${file}`, e.message);
+        continue;
+      }
+    } else if (ext === '.html') {
+      try {
+        const rawHtml = fs.readFileSync(filePath, 'utf8');
+        content = cleanHtml(rawHtml);
+      } catch (e) {
+        console.error(`[Ingest] Failed processing HTML file: ${file}`, e.message);
         continue;
       }
     } else {
