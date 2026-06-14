@@ -68,7 +68,7 @@ export interface ComplianceProfile {
   recommended_actions: string[];
 }
 
-const API_BASE = "http://localhost:5000/api";
+export const API_BASE = import.meta.env.VITE_API_BASE || "http://localhost:5005/api";
 
 // JWT Helper Functions
 export const getToken = (): string | null => localStorage.getItem('udyan_auth_token');
@@ -134,8 +134,8 @@ export const getMe = async () => {
 // ==========================================
 
 export const uploadIdentityDocs = async (
-  aadhaarFile: File | null, 
-  panFile: File | null, 
+  aadhaarFile: File | null,
+  panFile: File | null,
   phone: string,
   fullName?: string,
   address?: string,
@@ -426,7 +426,7 @@ export const getComplianceProfile = async (): Promise<ComplianceProfile> => {
   // Local Storage Failover calculations
   const licenses = await getLicenses();
   const score = calculateHealthScore(licenses);
-  
+
   let riskLevel = 'Low Risk';
   if (score >= 90) riskLevel = 'Low Risk';
   else if (score >= 70) riskLevel = 'Medium Risk';
