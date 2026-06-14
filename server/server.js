@@ -1071,10 +1071,15 @@ app.get('/api/portal-links', (req, res) => {
   ]);
 });
 
-// Boot server
-app.listen(PORT, () => {
-  console.log(`===================================================`);
-  console.log(`  UDYAMAI MONGO-API SERVER - RUNNING SUCCESS       `);
-  console.log(`  Local Address: http://localhost:${PORT}           `);
-  console.log(`===================================================`);
-});
+// Boot server (only for local development)
+if (require.main === module) {
+  app.listen(PORT, () => {
+    console.log(`===================================================`);
+    console.log(`  UDYAMAI MONGO-API SERVER - RUNNING SUCCESS       `);
+    console.log(`  Local Address: http://localhost:${PORT}           `);
+    console.log(`===================================================`);
+  });
+}
+
+// Export for Vercel serverless function
+module.exports = app;

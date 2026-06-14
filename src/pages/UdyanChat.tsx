@@ -13,6 +13,8 @@ interface ChatMessage {
   sender: 'user' | 'assistant';
   text: string;
   language?: Lang;
+  sources?: Array<{ source: string; score: number }>;
+  mode?: 'rag' | 'fallback';
 }
 
 const UdyanChat: React.FC = () => {
@@ -477,6 +479,41 @@ A Fire No Objection Certificate (NOC) certifies that a commercial building compl
     }
   };
 
+  const startStreamingResponse = (
+    responseText: string,
+    sources?: Array<{ source: string; score: number }>,
+    mode?: 'rag' | 'fallback'
+  ) => {
+    let currentLength = 0;
+    const streamMsg: ChatMessage = {
+      sender: 'assistant',
+      text: '',
+      language: selectedLang,
+      sources,
+      mode
+    };
+    setChatHistory(prev => [...prev, streamMsg]);
+
+    const interval = setInterval(() => {
+      currentLength += 8; // character print speed
+      if (currentLength >= responseText.length) {
+        clearInterval(interval);
+        setChatHistory(prev => {
+          const updatedHistory = [...prev];
+          updatedHistory[updatedHistory.length - 1].text = responseText;
+          return updatedHistory;
+        });
+        setStreaming(false);
+      } else {
+        setChatHistory(prev => {
+          const updatedHistory = [...prev];
+          updatedHistory[updatedHistory.length - 1].text = responseText.slice(0, currentLength) + ' \u258C';
+          return updatedHistory;
+        });
+      }
+    }, 30);
+  };
+
   const handleSend = (text: string) => {
     if (!text.trim()) return;
 
@@ -486,8 +523,7 @@ A Fire No Objection Certificate (NOC) certifies that a commercial building compl
     setInputMessage('');
     setStreaming(true);
 
-    // Simulate Sarvam AI NLP parsing & stream reply
-    setTimeout(() => {
+    const runOfflineFallback = () => {
       // Determine response. Check if text matches any quick questions
       let matchedKey = '';
       quickQuestions.forEach(q => {
@@ -499,7 +535,7 @@ A Fire No Objection Certificate (NOC) certifies that a commercial building compl
 
       let responseText = '';
       if (matchedKey && responseDb[matchedKey]) {
-        responseText = responseDb[matchedKey][selectedLang];
+        responseText = `*(Offline Fallback)*\n\n` + responseDb[matchedKey][selectedLang];
       } else {
         // Fallback custom generated multilingual answer simulation
         const generalFallbacks: { [key in Lang]: string } = {
@@ -544,34 +580,57 @@ I detected your query. As your Udyan AI Compliance copilot, I recommend checking
 2. காலாவதி தேதிகளை சரிபார்க்கவும்.
 3. இணக்க சரிபார்ப்புப் பட்டியலை பதிவிறக்கம் செய்து, விண்ணப்பிக்க **Udyan AI போர்டல் ரீடைரெக்ட்** ஐப் பயன்படுத்தவும்.`
         };
-        responseText = generalFallbacks[selectedLang];
+        responseText = `*(Offline Fallback)*\n\n` + generalFallbacks[selectedLang];
       }
 
-      // Live typing stream simulation
-      let currentLength = 0;
-      const streamMsg: ChatMessage = { sender: 'assistant', text: '', language: selectedLang };
-      setChatHistory(prev => [...prev, streamMsg]);
 
-      const interval = setInterval(() => {
-        currentLength += 8; // character print speed
-        if (currentLength >= responseText.length) {
-          clearInterval(interval);
-          setChatHistory(prev => {
-            const updated = [...prev];
-            updated[updated.length - 1].text = responseText;
-            return updated;
-          });
-          setStreaming(false);
-        } else {
-          setChatHistory(prev => {
-            const updated = [...prev];
-            updated[updated.length - 1].text = responseText.slice(0, currentLength) + ' ▌';
-            return updated;
-          });
+      startStreamingResponse(responseText, [], 'fallback');
+    };
+
+    const langNames: Record<Lang, string> = {
+      en: 'English',
+      hi: 'Hindi',
+      kn: 'Kannada',
+      te: 'Telugu',
+      ta: 'Tamil',
+    };
+
+    const historyPayload = chatHistory.map(msg => ({
+      role: msg.sender === 'user' ? 'user' : 'assistant',
+      content: msg.text
+    }));
+
+    fetch('https://organic-space-disco-r4g7jr46pjvxcwj5-5002.app.github.dev/api/query', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        query: text,
+        chatHistory: historyPayload,
+        options: {
+          language: langNames[selectedLang],
+          tone: 'professional',
+        },
+      }),
+    })
+      .then(res => {
+        if (!res.ok) {
+          throw new Error(`Server returned status ${res.status}`);
         }
-      }, 30);
-
-    }, 1200);
+        return res.json();
+      })
+      .then(data => {
+        if (data.success) {
+          startStreamingResponse(data.answer, data.sources, data.mode);
+        } else {
+          throw new Error(data.error || 'Server error occurred in query');
+        }
+      })
+      .catch(err => {
+        console.error('RAG API Error:', err);
+        runOfflineFallback();
+      });
   };
 
   return (
