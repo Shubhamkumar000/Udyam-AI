@@ -1,16 +1,16 @@
 import React, { useState, useRef } from 'react';
-import { 
-  Upload, 
-  FileImage, 
-  RefreshCw, 
-  CheckCircle2, 
-  Brain, 
-  FileText, 
+import {
+  Upload,
+  FileImage,
+  RefreshCw,
+  CheckCircle2,
+  Brain,
+  FileText,
   ChevronRight,
   Sparkles
 } from 'lucide-react';
 import { createWorker } from 'tesseract.js';
-import { saveLicense } from '../utils/udyanStorage';
+import { saveLicense, API_BASE } from '../utils/udyanStorage';
 import Sidebar from '../components/Udyan/Sidebar';
 import { useNavigate } from 'react-router-dom';
 import confetti from 'canvas-confetti';
@@ -35,7 +35,7 @@ const UdyanScanner: React.FC = () => {
   const [rawText, setRawText] = useState('');
   const [extractedData, setExtractedData] = useState<ExtractedData | null>(null);
   const [selectedSample, setSelectedSample] = useState<string | null>(null);
-  
+
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
@@ -140,7 +140,7 @@ const UdyanScanner: React.FC = () => {
 
     try {
       const worker = await createWorker('eng');
-      
+
       setStatusMessage('Analyzing pixel alignments...');
       // Track worker events
       // @ts-ignore
@@ -200,7 +200,7 @@ const UdyanScanner: React.FC = () => {
 
       try {
         const token = localStorage.getItem('udyan_auth_token');
-        const res = await fetch('http://localhost:5000/api/ai-extract-license', {
+        const res = await fetch(`${API_BASE}/ai-extract-license`, {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
@@ -291,13 +291,13 @@ const UdyanScanner: React.FC = () => {
 
   const handleSaveExtracted = async () => {
     if (!extractedData) return;
-    
+
     // Save to our controller
-    const mockPortalUrl = 
+    const mockPortalUrl =
       extractedData.license_type === 'FSSAI' ? 'https://foodlicenseportal.org/Home/renew?gad_source=1&gad_campaignid=23038392925&gbraid=0AAAAACzocouD9ojWtNfBiCtpWM2iev4Kp&gclid=Cj0KCQjw_7PRBhDcARIsAMjV7jnDkAkl_H_guWUD_Spud_xBdQ1LIoXh2ZWCh0R9HprCRjXePuHlHIcaAj4YEALw_wcB' :
-      extractedData.license_type === 'GST' ? 'https://services.gst.gov.in/services/login' :
-      extractedData.license_type === 'Trade License' ? 'https://bbmp.gov.in' :
-      'https://india.gov.in';
+        extractedData.license_type === 'GST' ? 'https://services.gst.gov.in/services/login' :
+          extractedData.license_type === 'Trade License' ? 'https://bbmp.gov.in' :
+            'https://india.gov.in';
 
     await saveLicense({
       type: extractedData.license_type,
@@ -325,7 +325,7 @@ const UdyanScanner: React.FC = () => {
       <Sidebar />
 
       <main className="flex-1 overflow-y-auto p-8">
-        
+
         {/* Top Header */}
         <header className="mb-8">
           <h1 className="text-3xl font-bold font-norms tracking-tight text-black flex items-center gap-2">
@@ -337,10 +337,10 @@ const UdyanScanner: React.FC = () => {
         </header>
 
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-          
+
           {/* Left panel: Upload and Interactive triggers */}
           <div className="space-y-6">
-            
+
             {/* Clickable Pre-built templates for demo */}
             <div className="bg-white border border-gray-200 rounded-2xl p-5 shadow-sm text-black">
               <h2 className="text-sm font-bold text-gray-800 mb-3 font-norms flex items-center gap-1.5">
@@ -350,17 +350,16 @@ const UdyanScanner: React.FC = () => {
               <p className="text-xs text-gray-500 mb-4 leading-relaxed">
                 No real files? Generate mock certificates programmatically and send them straight into Tesseract.js.
               </p>
-              
+
               <div className="grid grid-cols-3 gap-3">
                 {(['FSSAI', 'GST', 'Trade License'] as const).map(t => (
                   <button
                     key={t}
                     onClick={() => generateSampleLicense(t)}
-                    className={`text-xs font-semibold p-3.5 border rounded-xl transition-all ${
-                      selectedSample === t 
-                        ? 'bg-black border-black text-white shadow' 
+                    className={`text-xs font-semibold p-3.5 border rounded-xl transition-all ${selectedSample === t
+                        ? 'bg-black border-black text-white shadow'
                         : 'bg-white border-gray-200 hover:border-gray-400 text-gray-550'
-                    }`}
+                      }`}
                   >
                     {t} Certificate
                   </button>
@@ -371,7 +370,7 @@ const UdyanScanner: React.FC = () => {
                 <div className="mt-4 border border-gray-100 bg-gray-50 rounded-xl p-3.5 flex flex-col items-center justify-center">
                   <span className="text-[10px] text-gray-400 font-mono uppercase font-bold mb-2">Live Canvas Generated Document:</span>
                   <canvas ref={canvasRef} className="max-w-full h-auto border border-gray-200 rounded-md bg-white shadow-sm" style={{ maxHeight: '180px' }} />
-                  
+
                   <button
                     onClick={runSampleOCR}
                     disabled={scanning}
@@ -385,24 +384,23 @@ const UdyanScanner: React.FC = () => {
             </div>
 
             {/* Drag and Drop Uploader */}
-            <div 
+            <div
               onDragEnter={handleDrag}
               onDragOver={handleDrag}
               onDragLeave={handleDrag}
               onDrop={handleDrop}
-              className={`border-2 border-dashed rounded-2xl p-8 text-center flex flex-col items-center justify-center min-h-[200px] transition-all cursor-pointer ${
-                dragActive 
-                  ? 'border-black bg-black/5' 
+              className={`border-2 border-dashed rounded-2xl p-8 text-center flex flex-col items-center justify-center min-h-[200px] transition-all cursor-pointer ${dragActive
+                  ? 'border-black bg-black/5'
                   : 'border-gray-200 bg-white hover:bg-gray-50/50 hover:border-gray-400 shadow-sm'
-              }`}
+                }`}
               onClick={() => fileInputRef.current?.click()}
             >
-              <input 
+              <input
                 ref={fileInputRef}
-                type="file" 
+                type="file"
                 accept="image/*,application/pdf"
                 onChange={handleFileChange}
-                className="hidden" 
+                className="hidden"
               />
               <div className="p-4 bg-gray-50 border border-gray-200 text-black rounded-2xl mb-4 shadow-sm">
                 <Upload className="w-8 h-8" />
@@ -421,8 +419,8 @@ const UdyanScanner: React.FC = () => {
                   <span className="font-mono text-blue-600 font-bold">{ocrProgress}%</span>
                 </div>
                 <div className="w-full bg-gray-100 h-2 rounded-full overflow-hidden border border-gray-200">
-                  <div 
-                    className="bg-black h-full rounded-full transition-all duration-300 ease-out" 
+                  <div
+                    className="bg-black h-full rounded-full transition-all duration-300 ease-out"
                     style={{ width: `${ocrProgress}%` }}
                   />
                 </div>
@@ -433,7 +431,7 @@ const UdyanScanner: React.FC = () => {
 
           {/* Right panel: Extracted Metadata & Review */}
           <div className="space-y-6">
-            
+
             {/* Extracted form display */}
             {extractedData ? (
               <div className="bg-white border border-gray-200 rounded-2xl p-6 relative overflow-hidden shadow-sm text-black">

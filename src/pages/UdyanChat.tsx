@@ -477,102 +477,107 @@ A Fire No Objection Certificate (NOC) certifies that a commercial building compl
     }
   };
 
-  const handleSend = (text: string) => {
-    if (!text.trim()) return;
+  const handleSend = async (text: string) => {
+  if (!text.trim()) return;
 
-    // Add user message
-    const userMsg: ChatMessage = { sender: 'user', text, language: selectedLang };
-    setChatHistory(prev => [...prev, userMsg]);
-    setInputMessage('');
-    setStreaming(true);
-
-    // Simulate Sarvam AI NLP parsing & stream reply
-    setTimeout(() => {
-      // Determine response. Check if text matches any quick questions
-      let matchedKey = '';
-      quickQuestions.forEach(q => {
-        if (q.question.en.toLowerCase() === text.toLowerCase() || 
-            q.question[selectedLang].toLowerCase() === text.toLowerCase()) {
-          matchedKey = q.id;
-        }
-      });
-
-      let responseText = '';
-      if (matchedKey && responseDb[matchedKey]) {
-        responseText = responseDb[matchedKey][selectedLang];
-      } else {
-        // Fallback custom generated multilingual answer simulation
-        const generalFallbacks: { [key in Lang]: string } = {
-          en: `### **Compliance Advisory Response**
-
-I detected your query. As your Udyan AI Compliance copilot, I recommend checking your **Business Profile** coordinates.
-
-**Recommended Renewal Steps:**
-1. Navigate to the **Registered Licenses** dashboard.
-2. Cross-reference the expiry date markers.
-3. Download the specific checklist, and use the **Udyan AI portal redirect** to carry out the forms submission.`,
-          hi: `### **अनुपालन सलाहकार प्रतिक्रिया**
-
-मैंने आपका प्रश्न दर्ज किया है। आपके उद्यान एआई अनुपालन सह-पायलट के रूप में, मैं आपकी **व्यवसाय प्रोफ़ाइल** विवरण की जांच करने की अनुशंसा करता हूं।
-
-**अनुशंसित नवीनीकरण चरण:**
-1. **Registered Licenses** डैशबोर्ड पर जाएं।
-2. समाप्ति तिथि मार्करों की जांच करें।
-3. विशिष्ट चेकलिस्ट डाउनलोड करें, और फ़ॉर्म सबमिट करने के लिए **Udyan AI पोर्टल रीडायरेक्ट** का उपयोग करें।`,
-          kn: `### **ಅನುಸರಣೆ ಸಲಹಾ ಉತ್ತರ**
-
-ನಿಮ್ಮ ಪ್ರಶ್ನೆಯನ್ನು ನಾನು ಗುರುತಿಸಿದ್ದೇನೆ. ಉದ್ಯಾನ್ ಎಐ ಸಹಾಯಕನಾಗಿ, ನಿಮ್ಮ **ವ್ಯವಹಾರ ಪ್ರೊಫೈಲ್** ವಿವರಗಳನ್ನು ಪರಿಶೀಲಿಸಲು ಶಿಫಾರಸು ಮಾಡುತ್ತೇನೆ.
-
-**ಶಿಫಾರಸು ಮಾಡಲಾದ ನವೀಕರಣ ಹಂತಗಳು:**
-1. **Registered Licenses** ಡ್ಯಾಶ್‌ಬೋರ್ಡ್‌ಗೆ ಭೇಟಿ ನೀಡಿ.
-2. ಅವಧಿ ಮುಗಿಯುವ ದಿನಾಂಕಗಳನ್ನು ಪರಿಶೀಲಿಸಿ.
-3. ಚೆಕ್‌ಲಿಸ್ಟ್ ಡೌನ್‌ಲೋಡ್ ಮಾಡಿ ಮತ್ತು ಅರ್ಜಿ ಸಲ್ಲಿಸಲು **Udyan AI ಪೋರ್ಟಲ್ ರೀಡೈರೆಕ್ಟ್** ಬಳಸಿ.`,
-          te: `### **ఆల్రైట్ సలహా ప్రతిస్పందన**
-
-నేను మీ ప్రశ్నను గుర్తించాను. మీ ఉద్యాన్ AI కాపిలట్‌గా, మీ **వ్యాపార ప్రೊఫైల్** వివరాలను ఒకసారి తనిఖీ చేయాలని నేను సిఫార్సు చేస్తున్నాను.
-
-**సిఫార్సు చేయబడిన దశలు:**
-1. **Registered Licenses** డాష్‌బోర్డ్‌ను సందర్శించండి.
-2. గడువు తేదీలను క్రాస్-చెక్ చేసుకోండి.
-3. చెక్‌లిస్ట్ డౌన్‌లోడ్ చేసి, **Udyan AI పోర్టల్ రీడైరెక్ట్** ఉపయోగించండి.`,
-          ta: `### **இணக்க ஆலோசனை பதில்**
-
-உங்கள் கேள்வியை நான் கண்டறிந்துள்ளேன். உங்கள் உத்யன் AI உதவியாளராக, உங்கள் **வணிக சுயவிவரத்தை** சரிபார்க்க பரிந்துரைக்கிறேன்.
-
-**புதுப்பிக்கும் படிகள்:**
-1. **Registered Licenses** டாஷ்போர்டிற்குச் செல்லவும்.
-2. காலாவதி தேதிகளை சரிபார்க்கவும்.
-3. இணக்க சரிபார்ப்புப் பட்டியலை பதிவிறக்கம் செய்து, விண்ணப்பிக்க **Udyan AI போர்டல் ரீடைரெக்ட்** ஐப் பயன்படுத்தவும்.`
-        };
-        responseText = generalFallbacks[selectedLang];
-      }
-
-      // Live typing stream simulation
-      let currentLength = 0;
-      const streamMsg: ChatMessage = { sender: 'assistant', text: '', language: selectedLang };
-      setChatHistory(prev => [...prev, streamMsg]);
-
-      const interval = setInterval(() => {
-        currentLength += 8; // character print speed
-        if (currentLength >= responseText.length) {
-          clearInterval(interval);
-          setChatHistory(prev => {
-            const updated = [...prev];
-            updated[updated.length - 1].text = responseText;
-            return updated;
-          });
-          setStreaming(false);
-        } else {
-          setChatHistory(prev => {
-            const updated = [...prev];
-            updated[updated.length - 1].text = responseText.slice(0, currentLength) + ' ▌';
-            return updated;
-          });
-        }
-      }, 30);
-
-    }, 1200);
+  // Add user message
+  const userMsg: ChatMessage = {
+    sender: 'user',
+    text,
+    language: selectedLang
   };
+
+  setChatHistory(prev => [...prev, userMsg]);
+  setInputMessage('');
+  setStreaming(true);
+
+  // Add empty assistant message for streaming effect
+  const streamMsg: ChatMessage = {
+    sender: 'assistant',
+    text: '',
+    language: selectedLang
+  };
+
+  setChatHistory(prev => [...prev, streamMsg]);
+
+  try {
+    const ragUrl = import.meta.env.VITE_RAG_API_BASE 
+      ? `${import.meta.env.VITE_RAG_API_BASE}/query` 
+      : "http://localhost:5002/api/query";
+
+    const response = await fetch(
+      ragUrl,
+      {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          query: text,
+          language: selectedLang
+        }),
+      }
+    );
+
+    if (!response.ok) {
+      throw new Error('Failed to fetch response');
+    }
+
+    const data = await response.json();
+
+    // Expected backend response:
+    // {
+    //   answer: "your AI generated response"
+    // }
+
+    const responseText =
+      data.answer ||
+      data.response ||
+      'No response received from AI service.';
+
+    // Streaming typing effect
+    let currentLength = 0;
+
+    const interval = setInterval(() => {
+      currentLength += 8;
+
+      if (currentLength >= responseText.length) {
+        clearInterval(interval);
+
+        setChatHistory(prev => {
+          const updated = [...prev];
+          updated[updated.length - 1].text = responseText;
+          return updated;
+        });
+
+        setStreaming(false);
+      } else {
+        setChatHistory(prev => {
+          const updated = [...prev];
+
+          updated[updated.length - 1].text =
+            responseText.slice(0, currentLength) + ' ▌';
+
+          return updated;
+        });
+      }
+    }, 20);
+
+  } catch (error) {
+    console.error('Chat API Error:', error);
+
+    setChatHistory(prev => {
+      const updated = [...prev];
+
+      updated[updated.length - 1].text =
+        'Unable to connect to the AI compliance server.';
+
+      return updated;
+    });
+
+    setStreaming(false);
+  }
+};
 
   return (
     <div className="flex bg-[#F5F5F5] min-h-screen text-black font-sans">
