@@ -7,7 +7,7 @@ import UdyanDashboard from './pages/UdyanDashboard';
 import UdyanScanner from './pages/UdyanScanner';
 import UdyanChat from './pages/UdyanChat';
 import UdyanProfile from './pages/UdyanProfile';
-import UdyanExtension from './pages/UdyanExtension';
+
 import UdyanIdentity from './pages/UdyanIdentity';
 import UdyanOnboarding from './pages/UdyanOnboarding';
 import UdyanUploadLicenses from './pages/UdyanUploadLicenses';
@@ -89,14 +89,7 @@ const App: React.FC = () => {
             </ProtectedRoute>
           } 
         />
-        <Route 
-          path="/udyan/extension" 
-          element={
-            <ProtectedRoute>
-              <UdyanExtension />
-            </ProtectedRoute>
-          } 
-        />
+
         <Route 
           path="/udyan/license/:type" 
           element={

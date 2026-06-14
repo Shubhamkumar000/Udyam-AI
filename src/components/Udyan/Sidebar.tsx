@@ -19,7 +19,6 @@ const Sidebar: React.FC = () => {
     { name: 'AI License Scanner', path: '/udyan/scanner', icon: ScanLine },
     { name: 'AI Compliance Chat', path: '/udyan/chat', icon: MessageSquareCode },
     { name: 'Business Profile', path: '/udyan/profile', icon: Briefcase },
-    { name: 'Chrome Extension', path: '/udyan/extension', icon: Globe },
   ];
 
   return (
@@ -66,7 +65,7 @@ const Sidebar: React.FC = () => {
           <span className="text-xs font-semibold text-gray-700">Sarvam AI Online</span>
         </div>
         <p className="text-[11px] text-gray-400 leading-normal">
-          Udyan Autofill Engine loaded. Forms autofill matching enabled for 5 portals.
+          Udyan AI Engine loaded. Compliance tracking active for 5 portal categories.
         </p>
       </div>
 

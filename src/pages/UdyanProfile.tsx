@@ -96,7 +96,7 @@ const UdyanProfile: React.FC = () => {
         <header className="mb-8">
           <h1 className="text-3xl font-bold font-norms tracking-tight text-black">Business Profile Settings</h1>
           <p className="text-gray-500 text-sm mt-1">
-            These coordinates are securely utilized by the Udyan Autofill Chrome extension to map and inject portal forms.
+            These coordinates are securely utilized by Udyan AI to map and pre-fill government portal forms.
           </p>
         </header>
 
@@ -112,7 +112,7 @@ const UdyanProfile: React.FC = () => {
           <div className="p-4 bg-emerald-50 border border-emerald-250 rounded-2xl flex gap-3 items-center mb-6 max-w-4xl text-emerald-700">
             <CheckCircle2 className="w-5 h-5 text-emerald-600 shrink-0" />
             <span className="text-xs font-semibold">
-              Business Profile successfully updated! Changes are synced with the Chrome Extension.
+              Business Profile successfully updated! Changes are synced across all portals.
             </span>
           </div>
         )}

@@ -55,7 +55,7 @@ const UdyanLanding: React.FC = () => {
               <a href="#features" className="text-base text-gray-700 hover:text-black font-medium transition-colors duration-200">Scanner</a>
               <Link to="/udyan" className="text-base text-gray-700 hover:text-black font-medium transition-colors duration-200">Dashboard</Link>
               <Link to="/udyan/chat" className="text-base text-gray-700 hover:text-black font-medium transition-colors duration-200">AI Chatbot</Link>
-              <Link to="/udyan/extension" className="text-base text-gray-700 hover:text-black font-medium transition-colors duration-200">Autofill</Link>
+
               <Link to="/udyan/profile" className="text-base text-gray-700 hover:text-black font-medium transition-colors duration-200">Profile</Link>
             </div>
             
@@ -217,7 +217,7 @@ const UdyanLanding: React.FC = () => {
               </div>
               <div>
                 <p className="text-white/70 text-base leading-relaxed font-sans">
-                  Use our Chrome Extension to auto-map and auto-fill business profile fields on government registration forms.
+                  AI-powered portal redirect and pre-filled compliance data for fast government form submissions.
                 </p>
               </div>
             </div>
