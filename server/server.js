@@ -32,6 +32,17 @@ if (!fs.existsSync(uploadsDir)) {
 }
 app.use('/uploads', express.static(uploadsDir));
 
+// Health check routes
+app.get('/health', (req, res) => res.json({ status: 'OK' }));
+app.get('/api/health', (req, res) => {
+  res.json({
+    status: 'OK',
+    timestamp: new Date().toISOString(),
+    database: mongoose.connection.readyState === 1 ? 'connected' : 'disconnected'
+  });
+});
+
+
 // Multer storage config
 const storage = multer.diskStorage({
   destination: (req, file, cb) => {
