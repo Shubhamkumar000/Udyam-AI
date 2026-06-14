@@ -479,7 +479,7 @@ A Fire No Objection Certificate (NOC) certifies that a commercial building compl
     }
   };
 
-<<<<<<< HEAD
+
   const startStreamingResponse = (
     responseText: string,
     sources?: Array<{ source: string; score: number }>,
@@ -515,124 +515,6 @@ A Fire No Objection Certificate (NOC) certifies that a commercial building compl
     }, 30);
   };
 
-  const handleSend = (text: string) => {
-    if (!text.trim()) return;
-
-    // Add user message
-    const userMsg: ChatMessage = { sender: 'user', text, language: selectedLang };
-    setChatHistory(prev => [...prev, userMsg]);
-    setInputMessage('');
-    setStreaming(true);
-
-    const runOfflineFallback = () => {
-      // Determine response. Check if text matches any quick questions
-      let matchedKey = '';
-      quickQuestions.forEach(q => {
-        if (q.question.en.toLowerCase() === text.toLowerCase() || 
-            q.question[selectedLang].toLowerCase() === text.toLowerCase()) {
-          matchedKey = q.id;
-        }
-      });
-
-      let responseText = '';
-      if (matchedKey && responseDb[matchedKey]) {
-        responseText = `*(Offline Fallback)*\n\n` + responseDb[matchedKey][selectedLang];
-      } else {
-        // Fallback custom generated multilingual answer simulation
-        const generalFallbacks: { [key in Lang]: string } = {
-          en: `### **Compliance Advisory Response**
-
-I detected your query. As your Udyan AI Compliance copilot, I recommend checking your **Business Profile** coordinates.
-
-**Recommended Renewal Steps:**
-1. Navigate to the **Registered Licenses** dashboard.
-2. Cross-reference the expiry date markers.
-3. Download the specific checklist, and use the **Udyan AI portal redirect** to carry out the forms submission.`,
-          hi: `### **अनुपालन सलाहकार प्रतिक्रिया**
-
-मैंने आपका प्रश्न दर्ज किया है। आपके उद्यान एआई अनुपालन सह-पायलट के रूप में, मैं आपकी **व्यवसाय प्रोफ़ाइल** विवरण की जांच करने की अनुशंसा करता हूं।
-
-**अनुशंसित नवीनीकरण चरण:**
-1. **Registered Licenses** डैशबोर्ड पर जाएं।
-2. समाप्ति तिथि मार्करों की जांच करें।
-3. विशिष्ट चेकलिस्ट डाउनलोड करें, और फ़ॉर्म सबमिट करने के लिए **Udyan AI पोर्टल रीडायरेक्ट** का उपयोग करें।`,
-          kn: `### **ಅನುಸರಣೆ ಸಲಹಾ ಉತ್ತರ**
-
-ನಿಮ್ಮ ಪ್ರಶ್ನೆಯನ್ನು ನಾನು ಗುರುತಿಸಿದ್ದೇನೆ. ಉದ್ಯಾನ್ ಎಐ ಸಹಾಯಕನಾಗಿ, ನಿಮ್ಮ **ವ್ಯವಹಾರ ಪ್ರೊಫೈಲ್** ವಿವರಗಳನ್ನು ಪರಿಶೀಲಿಸಲು ಶಿಫಾರಸು ಮಾಡುತ್ತೇನೆ.
-
-**ಶಿಫಾರಸು ಮಾಡಲಾದ ನವೀಕರಣ ಹಂತಗಳು:**
-1. **Registered Licenses** ಡ್ಯಾಶ್‌ಬೋರ್ಡ್‌ಗೆ ಭೇಟಿ ನೀಡಿ.
-2. ಅವಧಿ ಮುಗಿಯುವ ದಿನಾಂಕಗಳನ್ನು ಪರಿಶೀಲಿಸಿ.
-3. ಚೆಕ್‌ಲಿಸ್ಟ್ ಡೌನ್‌ಲೋಡ್ ಮಾಡಿ ಮತ್ತು ಅರ್ಜಿ ಸಲ್ಲಿಸಲು **Udyan AI ಪೋರ್ಟಲ್ ರೀಡೈರೆಕ್ಟ್** ಬಳಸಿ.`,
-          te: `### **ఆల్రైట్ సలహా ప్రతిస్పందన**
-
-నేను మీ ప్రశ్నను గుర్తించాను. మీ ఉద్యాన్ AI కాపిలట్‌గా, మీ **వ్యాపార ప్రೊఫైల్** వివరాలను ఒకసారి తనిఖీ చేయాలని నేను సిఫార్సు చేస్తున్నాను.
-
-**సిఫార్సు చేయబడిన దశలు:**
-1. **Registered Licenses** డాష్‌బోర్డ్‌ను సందర్శించండి.
-2. గడువు తేదీలను క్రాస్-చెక్ చేసుకోండి.
-3. చెక్‌లిస్ట్ డౌన్‌లోడ్ చేసి, **Udyan AI పోర్టల్ రీడైరెక్ట్** ఉపయోగించండి.`,
-          ta: `### **இணக்க ஆலோசனை பதில்**
-
-உங்கள் கேள்வியை நான் கண்டறிந்துள்ளேன். உங்கள் உத்யன் AI உதவியாளராக, உங்கள் **வணிக சுயவிவரத்தை** சரிபார்க்க பரிந்துரைக்கிறேன்.
-
-**புதுப்பிக்கும் படிகள்:**
-1. **Registered Licenses** டாஷ்போர்டிற்குச் செல்லவும்.
-2. காலாவதி தேதிகளை சரிபார்க்கவும்.
-3. இணக்க சரிபார்ப்புப் பட்டியலை பதிவிறக்கம் செய்து, விண்ணப்பிக்க **Udyan AI போர்டல் ரீடைரெக்ட்** ஐப் பயன்படுத்தவும்.`
-        };
-        responseText = `*(Offline Fallback)*\n\n` + generalFallbacks[selectedLang];
-      }
-
-
-      startStreamingResponse(responseText, [], 'fallback');
-    };
-
-    const langNames: Record<Lang, string> = {
-      en: 'English',
-      hi: 'Hindi',
-      kn: 'Kannada',
-      te: 'Telugu',
-      ta: 'Tamil',
-    };
-
-    const historyPayload = chatHistory.map(msg => ({
-      role: msg.sender === 'user' ? 'user' : 'assistant',
-      content: msg.text
-    }));
-
-    fetch('https://organic-space-disco-r4g7jr46pjvxcwj5-5002.app.github.dev/api/query', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({
-        query: text,
-        chatHistory: historyPayload,
-        options: {
-          language: langNames[selectedLang],
-          tone: 'professional',
-        },
-      }),
-    })
-      .then(res => {
-        if (!res.ok) {
-          throw new Error(`Server returned status ${res.status}`);
-        }
-        return res.json();
-      })
-      .then(data => {
-        if (data.success) {
-          startStreamingResponse(data.answer, data.sources, data.mode);
-        } else {
-          throw new Error(data.error || 'Server error occurred in query');
-        }
-      })
-      .catch(err => {
-        console.error('RAG API Error:', err);
-        runOfflineFallback();
-      });
-=======
   const handleSend = async (text: string) => {
   if (!text.trim()) return;
 
@@ -641,14 +523,120 @@ I detected your query. As your Udyan AI Compliance copilot, I recommend checking
     sender: 'user',
     text,
     language: selectedLang
->>>>>>> b36f9b8b9d8556a7a4672595e696cd556afcd61f
   };
 
   setChatHistory(prev => [...prev, userMsg]);
   setInputMessage('');
   setStreaming(true);
 
-  // Add empty assistant message for streaming effect
+  // -----------------------------
+  // OFFLINE FALLBACK FUNCTION
+  // -----------------------------
+  const runOfflineFallback = () => {
+
+    let matchedKey = '';
+
+    quickQuestions.forEach(q => {
+      if (
+        q.question.en.toLowerCase() === text.toLowerCase() ||
+        q.question[selectedLang].toLowerCase() === text.toLowerCase()
+      ) {
+        matchedKey = q.id;
+      }
+    });
+
+    let responseText = '';
+
+    if (matchedKey && responseDb[matchedKey]) {
+
+      responseText =
+        `*(Offline Fallback)*\n\n` +
+        responseDb[matchedKey][selectedLang];
+
+    } else {
+
+      const generalFallbacks: { [key in Lang]: string } = {
+
+        en: `### **Compliance Advisory Response**
+
+I detected your query. As your Udyan AI Compliance copilot, I recommend checking your **Business Profile** coordinates.
+
+**Recommended Renewal Steps:**
+1. Navigate to the **Registered Licenses** dashboard.
+2. Cross-reference the expiry date markers.
+3. Download the specific checklist, and use the **Udyan AI portal redirect** to carry out the forms submission.`,
+
+        hi: `### **अनुपालन सलाहकार प्रतिक्रिया**
+
+मैंने आपका प्रश्न दर्ज किया है। आपके उद्यान एआई अनुपालन सह-पायलट के रूप में, मैं आपकी **व्यवसाय प्रोफ़ाइल** विवरण की जांच करने की अनुशंसा करता हूं।
+
+**अनुशंसित नवीनीकरण चरण:**
+1. **Registered Licenses** डैशबोर्ड पर जाएं।
+2. समाप्ति तिथि मार्करों की जांच करें।
+3. विशिष्ट चेकलिस्ट डाउनलोड करें, और फ़ॉर्म सबमिट करने के लिए **Udyan AI पोर्टल रीडायरेक्ट** का उपयोग करें।`,
+
+        kn: `### **ಅನುಸರಣೆ ಸಲಹಾ ಉತ್ತರ**
+
+ನಿಮ್ಮ ಪ್ರಶ್ನೆಯನ್ನು ನಾನು ಗುರುತಿಸಿದ್ದೇನೆ. ಉದ್ಯಾನ್ ಎಐ ಸಹಾಯಕನಾಗಿ, ನಿಮ್ಮ **ವ್ಯವಹಾರ ಪ್ರೊಫೈಲ್** ವಿವರಗಳನ್ನು ಪರಿಶೀಲಿಸಲು ಶಿಫಾರಸು ಮಾಡುತ್ತೇನೆ.
+
+**ಶಿಫಾರಸು ಮಾಡಲಾದ ನವೀಕರಣ ಹಂತಗಳು:**
+1. **Registered Licenses** ಡ್ಯಾಶ್‌ಬೋರ್ಡ್‌ಗೆ ಭೇಟಿ ನೀಡಿ.
+2. ಅವಧಿ ಮುಗಿಯುವ ದಿನಾಂಕಗಳನ್ನು ಪರಿಶೀಲಿಸಿ.
+3. ಚೆಕ್‌ಲಿಸ್ಟ್ ಡೌನ್‌ಲೋಡ್ ಮಾಡಿ ಮತ್ತು ಅರ್ಜಿ ಸಲ್ಲಿಸಲು **Udyan AI ಪೋರ್ಟಲ್ ರೀಡೈರೆಕ್ಟ್** ಬಳಸಿ.`,
+
+        te: `### **ఆల్రైట్ సలహా ప్రతిస్పందన**
+
+నేను మీ ప్రశ్నను గుర్తించాను. మీ ఉద్యాన్ AI కాపిలట్‌గా, మీ **వ్యాపార ప్రొఫైల్** వివరాలను ఒకసారి తనిఖీ చేయాలని నేను సిఫార్సు చేస్తున్నాను.
+
+**సిఫార్సు చేయబడిన దశలు:**
+1. **Registered Licenses** డాష్‌బోర్డ్‌ను సందర్శించండి.
+2. గడువు తేదీలను క్రాస్-చెక్ చేసుకోండి.
+3. చెక్‌లిస్ట్ డౌన్‌లోడ్ చేసి, **Udyan AI పోర్టల్ రీడైరెక్ట్** ఉపయోగించండి.`,
+
+        ta: `### **இணக்க ஆலோசனை பதில்**
+
+உங்கள் கேள்வியை நான் கண்டறிந்துள்ளேன். உங்கள் உத்யன் AI உதவியாளராக, உங்கள் **வணிக சுயவிவரத்தை** சரிபார்க்க பரிந்துரைக்கிறேன்.
+
+**புதுப்பிக்கும் படிகள்:**
+1. **Registered Licenses** டாஷ்போர்டிற்குச் செல்லவும்.
+2. காலாவதி தேதிகளை சரிபார்க்கவும்.
+3. இணக்க சரிபார்ப்புப் பட்டியலை பதிவிறக்கம் செய்து, விண்ணப்பிக்க **Udyan AI போர்டல் ரீடைரெக்ட்** ஐப் பயன்படுத்தவும்.`
+      };
+
+      responseText =
+        `*(Offline Fallback)*\n\n` +
+        generalFallbacks[selectedLang];
+    }
+
+    startStreamingResponse(
+      responseText,
+      [],
+      'fallback'
+    );
+  };
+
+  // -----------------------------
+  // LANGUAGE MAPPING
+  // -----------------------------
+  const langNames: Record<Lang, string> = {
+    en: 'English',
+    hi: 'Hindi',
+    kn: 'Kannada',
+    te: 'Telugu',
+    ta: 'Tamil',
+  };
+
+  // -----------------------------
+  // CHAT HISTORY PAYLOAD
+  // -----------------------------
+  const historyPayload = chatHistory.map(msg => ({
+    role: msg.sender === 'user' ? 'user' : 'assistant',
+    content: msg.text
+  }));
+
+  // -----------------------------
+  // ADD EMPTY STREAM MESSAGE
+  // -----------------------------
   const streamMsg: ChatMessage = {
     sender: 'assistant',
     text: '',
@@ -658,10 +646,18 @@ I detected your query. As your Udyan AI Compliance copilot, I recommend checking
   setChatHistory(prev => [...prev, streamMsg]);
 
   try {
-    const ragUrl = import.meta.env.VITE_RAG_API_BASE 
-      ? `${import.meta.env.VITE_RAG_API_BASE}/query` 
-      : "http://localhost:5002/api/query";
 
+    // -----------------------------
+    // RAG URL
+    // -----------------------------
+    const ragUrl =
+      import.meta.env.VITE_RAG_API_BASE
+        ? `${import.meta.env.VITE_RAG_API_BASE}/query`
+        : 'http://localhost:5002/api/query';
+
+    // -----------------------------
+    // FETCH REQUEST
+    // -----------------------------
     const response = await fetch(
       ragUrl,
       {
@@ -669,68 +665,105 @@ I detected your query. As your Udyan AI Compliance copilot, I recommend checking
         headers: {
           'Content-Type': 'application/json',
         },
+
         body: JSON.stringify({
           query: text,
-          language: selectedLang
+
+          chatHistory: historyPayload,
+
+          options: {
+            language: langNames[selectedLang],
+            tone: 'professional',
+          },
         }),
       }
     );
 
+    // -----------------------------
+    // ERROR CHECK
+    // -----------------------------
     if (!response.ok) {
-      throw new Error('Failed to fetch response');
+      throw new Error(
+        `Server returned status ${response.status}`
+      );
     }
 
+    // -----------------------------
+    // PARSE RESPONSE
+    // -----------------------------
     const data = await response.json();
 
-    // Expected backend response:
-    // {
-    //   answer: "your AI generated response"
-    // }
+    if (!data.success) {
+      throw new Error(
+        data.error || 'Server error occurred in query'
+      );
+    }
 
+    // -----------------------------
+    // RESPONSE TEXT
+    // -----------------------------
     const responseText =
       data.answer ||
       data.response ||
       'No response received from AI service.';
 
-    // Streaming typing effect
+    // -----------------------------
+    // STREAMING EFFECT
+    // -----------------------------
     let currentLength = 0;
 
     const interval = setInterval(() => {
+
       currentLength += 8;
 
       if (currentLength >= responseText.length) {
+
         clearInterval(interval);
 
         setChatHistory(prev => {
+
           const updated = [...prev];
-          updated[updated.length - 1].text = responseText;
+
+          updated[updated.length - 1] = {
+            sender: 'assistant',
+            text: responseText,
+            language: selectedLang,
+            sources: data.sources || [],
+            mode: data.mode || 'rag'
+          };
+
           return updated;
         });
 
         setStreaming(false);
+
       } else {
+
         setChatHistory(prev => {
+
           const updated = [...prev];
 
-          updated[updated.length - 1].text =
-            responseText.slice(0, currentLength) + ' ▌';
+          updated[updated.length - 1] = {
+            sender: 'assistant',
+            text:
+              responseText.slice(0, currentLength) + ' ▌',
+            language: selectedLang,
+            sources: data.sources || [],
+            mode: data.mode || 'rag'
+          };
 
           return updated;
         });
       }
+
     }, 20);
 
-  } catch (error) {
-    console.error('Chat API Error:', error);
+  } catch (err) {
 
-    setChatHistory(prev => {
-      const updated = [...prev];
+    console.error('RAG API Error:', err);
 
-      updated[updated.length - 1].text =
-        'Unable to connect to the AI compliance server.';
-
-      return updated;
-    });
+    // RUN FALLBACK
+    runOfflineFallback();
 
     setStreaming(false);
   }
