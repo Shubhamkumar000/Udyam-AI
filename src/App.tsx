@@ -12,6 +12,7 @@ import UdyanIdentity from './pages/UdyanIdentity';
 import UdyanOnboarding from './pages/UdyanOnboarding';
 import UdyanUploadLicenses from './pages/UdyanUploadLicenses';
 import UdyanLicenseDetail from './pages/UdyanLicenseDetail';
+import UdyanPendingLicenses from './pages/UdyanPendingLicenses';
 import { getToken } from './utils/udyanStorage';
 
 // Authentication Guard Component
@@ -97,6 +98,14 @@ const App: React.FC = () => {
               <UdyanLicenseDetail />
             </ProtectedRoute>
           } 
+        />
+        <Route
+          path="/udyan/pending-licenses"
+          element={
+            <ProtectedRoute>
+              <UdyanPendingLicenses />
+            </ProtectedRoute>
+          }
         />
 
         {/* Fallback Catch-All */}
