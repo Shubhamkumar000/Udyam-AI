@@ -5,7 +5,6 @@ import {
   ScanLine, 
   MessageSquareCode, 
   Briefcase, 
-  Globe, 
   ArrowLeft
 } from 'lucide-react';
 import { LogoIcon } from '../../pages/UdyanLanding';
@@ -30,7 +29,7 @@ const Sidebar: React.FC = () => {
             <LogoIcon className="w-6 h-6" />
           </div>
           <div>
-            <h1 className="text-xl font-bold tracking-tight text-black font-norms">UDYAN AI</h1>
+            <h1 className="text-xl font-bold tracking-tight text-black font-norms">UDYAM AI</h1>
             <p className="text-[10px] text-gray-500 font-medium font-sans">COMPLIANCE COPILOT</p>
           </div>
         </Link>
@@ -65,7 +64,7 @@ const Sidebar: React.FC = () => {
           <span className="text-xs font-semibold text-gray-700">Sarvam AI Online</span>
         </div>
         <p className="text-[11px] text-gray-400 leading-normal">
-          Udyan AI Engine loaded. Compliance tracking active for 5 portal categories.
+          Udyam AI Engine loaded. Compliance tracking active for 5 portal categories.
         </p>
       </div>
 

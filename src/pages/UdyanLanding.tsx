@@ -1,6 +1,7 @@
-import React from 'react';
-import { ArrowRight } from 'lucide-react';
+import React, { useEffect, useState } from 'react';
+import { ArrowRight, LogOut } from 'lucide-react';
 import { Link } from 'react-router-dom';
+import { getToken, removeToken } from '../utils/udyanStorage';
 export const LogoIcon: React.FC<{ className?: string }> = ({ className = "w-7 h-7" }) => {
   return (
     <svg
@@ -15,6 +16,16 @@ export const LogoIcon: React.FC<{ className?: string }> = ({ className = "w-7 h-
 };
 
 const UdyanLanding: React.FC = () => {
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
+
+  useEffect(() => {
+    setIsLoggedIn(!!getToken());
+  }, []);
+
+  const handleLogout = () => {
+    removeToken();
+    setIsLoggedIn(false);
+  };
   const brandList = [
     { name: 'FSSAI', style: { fontFamily: 'Georgia, serif', fontWeight: 700, letterSpacing: '-0.02em', fontSize: '15px' } },
     { name: 'GSTIN', style: { fontFamily: 'Arial, sans-serif', fontWeight: 900, letterSpacing: '0.08em', fontSize: '13px', textTransform: 'uppercase' as const } },
@@ -47,7 +58,7 @@ const UdyanLanding: React.FC = () => {
             {/* Left */}
             <div className="flex items-center gap-2">
               <LogoIcon className="w-7 h-7 text-black" />
-              <span className="text-2xl font-medium tracking-tight text-black font-norms">Udyan AI</span>
+              <span className="text-2xl font-medium tracking-tight text-black font-norms">Udyam AI</span>
             </div>
             
             {/* Center */}
@@ -61,24 +72,38 @@ const UdyanLanding: React.FC = () => {
             
             {/* Right Buttons */}
             <div className="flex items-center gap-3">
-              <Link
-                to="/login"
-                className="text-base font-medium px-5 py-2.5 rounded-full text-[#4B4963] hover:text-[#0D0D0D] transition-colors duration-200"
-              >
-                Log in
-              </Link>
-              <Link
-                to="/signup"
-                className="bg-[#0D0D0D] text-[#F4F2F7] text-base font-medium px-5 py-2.5 rounded-full hover:bg-[#4B4963] transition-colors duration-200"
-              >
-                Sign up
-              </Link>
-              <Link
-                to="/udyan"
-                className="border border-[#BFB7E3] bg-[#F4F2F7] text-[#0D0D0D] text-base font-medium px-5 py-2.5 rounded-full hover:bg-[#D9D2F0] transition-colors duration-200"
-              >
-                Launch Dashboard
-              </Link>
+              {!isLoggedIn ? (
+                <>
+                  <Link
+                    to="/login"
+                    className="text-base font-medium px-5 py-2.5 rounded-full text-[#4B4963] hover:text-[#0D0D0D] transition-colors duration-200"
+                  >
+                    Log in
+                  </Link>
+                  <Link
+                    to="/signup"
+                    className="bg-[#0D0D0D] text-[#F4F2F7] text-base font-medium px-5 py-2.5 rounded-full hover:bg-[#4B4963] transition-colors duration-200"
+                  >
+                    Sign up
+                  </Link>
+                </>
+              ) : (
+                <>
+                  <Link
+                    to="/udyan"
+                    className="border border-[#BFB7E3] bg-[#F4F2F7] text-[#0D0D0D] text-base font-medium px-5 py-2.5 rounded-full hover:bg-[#D9D2F0] transition-colors duration-200"
+                  >
+                    Launch Dashboard
+                  </Link>
+                  <button
+                    onClick={handleLogout}
+                    className="bg-[#0D0D0D] text-[#F4F2F7] text-base font-medium px-5 py-2.5 rounded-full hover:bg-[#4B4963] transition-colors duration-200 flex items-center gap-2"
+                  >
+                    <LogOut className="w-4 h-4" />
+                    Log out
+                  </button>
+                </>
+              )}
             </div>
           </div>
         </nav>
@@ -120,7 +145,7 @@ const UdyanLanding: React.FC = () => {
 
               {/* CTA button */}
               <Link to="/udyan" className="inline-flex items-center gap-3 bg-black text-white text-base md:text-lg font-medium pl-8 pr-2 py-2 rounded-full hover:bg-gray-800 transition-colors duration-200 shadow-lg group mb-8">
-                Try Udyan AI
+                Try Udyam AI
                 <span className="bg-white rounded-full p-2 group-hover:translate-x-1 transition-transform duration-200">
                   <ArrowRight className="w-5 h-5 text-black" />
                 </span>
@@ -153,7 +178,7 @@ const UdyanLanding: React.FC = () => {
           <div className="grid grid-cols-1 md:grid-cols-2 gap-12 mb-16 items-start">
             <div>
               <h2 className="text-black text-5xl md:text-6xl font-semibold leading-tight mb-8 tracking-tight font-norms" style={{ letterSpacing: '-0.03em' }}>
-                Meet Udyan AI.
+                Meet Udyam AI.
               </h2>
               <Link to="/udyan" className="inline-flex items-center gap-3 bg-black text-white text-base font-medium pl-7 pr-2 py-2 rounded-full hover:bg-gray-800 transition-colors duration-200 group">
                 Discover dashboard
@@ -164,7 +189,7 @@ const UdyanLanding: React.FC = () => {
             </div>
             <div>
               <p className="text-black/70 text-2xl md:text-3xl font-normal leading-relaxed md:pt-2">
-                Udyan AI is an intelligent copilot that monitors FSSAI, GST, Trade Licenses, and Fire NOCs, making sure your business stays compliant with zero manual tracking.
+                Udyam AI is an intelligent copilot that monitors FSSAI, GST, Trade Licenses, and Fire NOCs, making sure your business stays compliant with zero manual tracking.
               </p>
             </div>
           </div>
@@ -258,13 +283,13 @@ const UdyanLanding: React.FC = () => {
           {/* Left column */}
           <div className="flex flex-col justify-center pr-0 md:pr-12 py-6">
             <span className="text-black/60 text-sm font-semibold uppercase tracking-wider mb-2 font-sans">
-              Udyan AI in Practice
+              Udyam AI in Practice
             </span>
             <h2 className="text-5xl md:text-7xl font-semibold leading-none mb-6 font-norms" style={{ letterSpacing: '-0.04em' }}>
               Filing modes
             </h2>
             <p className="text-black/60 text-base md:text-lg leading-relaxed max-w-sm font-sans">
-              Udyan AI supports compliance flows for restaurants, hotels, MSME trade outlets, and corporate scaleups.
+              Udyam AI supports compliance flows for restaurants, hotels, MSME trade outlets, and corporate scaleups.
             </p>
           </div>
 
@@ -319,10 +344,10 @@ const UdyanLanding: React.FC = () => {
         <div className="max-w-[88rem] mx-auto flex flex-col md:flex-row justify-between items-center gap-6">
           <div className="flex items-center gap-2">
             <LogoIcon className="w-6 h-6 text-white" />
-            <span className="text-xl font-medium tracking-tight font-norms">Udyan AI</span>
+            <span className="text-xl font-medium tracking-tight font-norms">Udyam AI</span>
           </div>
           <p className="text-sm text-gray-400">
-            © 2026 Udyan AI Compliance. All rights reserved.
+            © 2026 Udyam AI Compliance. All rights reserved.
           </p>
           <div className="flex gap-6">
             <Link to="/udyan" className="text-sm text-gray-400 hover:text-white transition-colors">Compliance Dashboard</Link>

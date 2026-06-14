@@ -1,7 +1,7 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { Eye, EyeOff, Lock, Mail, AlertCircle } from 'lucide-react';
-import { apiLogin, getProfile } from '../utils/udyanStorage';
+import { apiLogin, getProfile, getToken } from '../utils/udyanStorage';
 
 const LogoIcon: React.FC<{ className?: string }> = ({ className = 'w-8 h-8' }) => (
   <svg
@@ -35,13 +35,13 @@ const AuthShell: React.FC<{ children: React.ReactNode; title: string; descriptio
           <div className="hidden sm:flex items-center gap-3">
             <Link
               to="/login"
-              className="px-5 py-2.5 rounded-full text-[#4B4963] hover:text-[#0D0D0D] font-medium transition-colors"
+              className="px-5 py-2.5 rounded-full bg-[#0D0D0D] text-[#F4F2F7] hover:bg-[#4B4963] transition-colors font-medium"
             >
               Log in
             </Link>
             <Link
               to="/signup"
-              className="px-5 py-2.5 rounded-full bg-[#0D0D0D] text-[#F4F2F7] hover:bg-[#4B4963] transition-colors font-medium"
+              className="px-5 py-2.5 rounded-full text-[#4B4963] hover:text-[#0D0D0D] font-medium transition-colors"
             >
               Sign up
             </Link>
@@ -88,6 +88,12 @@ const AuthShell: React.FC<{ children: React.ReactNode; title: string; descriptio
 const LoginPage: React.FC = () => {
   const navigate = useNavigate();
   const [showPassword, setShowPassword] = useState(false);
+
+  useEffect(() => {
+    if (getToken()) {
+      navigate('/udyan');
+    }
+  }, [navigate]);
 
   // Form states
   const [email, setEmail] = useState('');

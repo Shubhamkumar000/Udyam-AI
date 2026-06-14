@@ -1,7 +1,7 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { Eye, EyeOff, Lock, Mail, User, AlertCircle } from 'lucide-react';
-import { apiSignup } from '../utils/udyanStorage';
+import { apiSignup, getToken } from '../utils/udyanStorage';
 
 const LogoIcon: React.FC<{ className?: string }> = ({ className = 'w-8 h-8' }) => (
   <svg
@@ -89,6 +89,12 @@ const SignupPage: React.FC = () => {
   const navigate = useNavigate();
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
+
+  useEffect(() => {
+    if (getToken()) {
+      navigate('/udyan');
+    }
+  }, [navigate]);
 
   // Form states
   const [fullName, setFullName] = useState('');

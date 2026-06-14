@@ -9,12 +9,7 @@ import {
   UploadCloud, 
   Calendar, 
   ShieldCheck, 
-  Info,
-  Clock,
-  Download,
   Flame,
-  User,
-  Building,
   Bookmark
 } from 'lucide-react';
 import Sidebar from '../components/Udyan/Sidebar';
@@ -22,9 +17,7 @@ import {
   getLicenses, 
   getProfile, 
   getComplianceProfile, 
-  getChecklist, 
-  getMe,
-  removeToken
+  getChecklist
 } from '../utils/udyanStorage';
 import type { License, BusinessProfile, ComplianceProfile } from '../utils/udyanStorage';
 
@@ -44,8 +37,6 @@ const licensePortalUrls: Record<string, string> = {
 const UdyanLicenseDetail: React.FC = () => {
   const { type } = useParams<{ type: string }>();
   const navigate = useNavigate();
-  
-  const [currentUser, setCurrentUser] = useState<{ fullName: string; email: string } | null>(null);
   const [profile, setProfile] = useState<BusinessProfile | null>(null);
   const [compliance, setCompliance] = useState<ComplianceProfile | null>(null);
   const [license, setLicense] = useState<License | null>(null);
@@ -58,9 +49,6 @@ const UdyanLicenseDetail: React.FC = () => {
   const loadData = async () => {
     setLoading(true);
     try {
-      const user = await getMe();
-      setCurrentUser(user);
-
       const profData = await getProfile();
       const licData = await getLicenses();
       const compData = await getComplianceProfile();
@@ -123,13 +111,7 @@ const UdyanLicenseDetail: React.FC = () => {
   return (
     <div className="min-h-screen bg-[#F8F7FA] text-black font-norms flex">
       {/* Sidebar */}
-      <Sidebar 
-        currentUser={currentUser} 
-        onLogout={() => {
-          removeToken();
-          navigate('/login');
-        }} 
-      />
+      <Sidebar />
 
       {/* Main Content */}
       <main className="flex-grow p-6 md:p-10 max-w-7xl mx-auto overflow-y-auto">
@@ -263,19 +245,19 @@ const UdyanLicenseDetail: React.FC = () => {
               </div>
             </div>
 
-            {/* Card: Chrome Autofill details mapping */}
+            {/* Card: Government Portal Quick Access */}
             <div className="bg-white border border-gray-200 rounded-2xl p-6 shadow-sm">
               <h2 className="text-lg font-bold text-black font-norms mb-4 flex items-center gap-2">
                 <Bookmark className="w-5 h-5 text-indigo-500" />
-                Chrome Extension Integration Profile
+                Government Portal Quick Access
               </h2>
               <p className="text-xs text-gray-500 leading-relaxed mb-4">
-                The UdyamAI browser extension automatically detects when you visit official government portals for <strong className="text-black">{licType}</strong> and maps the following details to inputs.
+                Udyan AI pre-fills your business data when redirecting to the official <strong className="text-black">{licType}</strong> government portal.
               </p>
 
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div className="bg-gray-50 border border-gray-100 p-4 rounded-xl">
-                  <span className="text-[10px] text-gray-400 font-bold uppercase tracking-wider block mb-2">Extension Mapped Fields</span>
+                  <span className="text-[10px] text-gray-400 font-bold uppercase tracking-wider block mb-2">Mapped Fields</span>
                   <div className="space-y-1 text-xs text-gray-600 font-mono">
                     <div>Firm Name &rarr; <span className="text-black font-semibold">{profile?.business_name || 'N/A'}</span></div>
                     <div>License No &rarr; <span className="text-black font-semibold">{license?.license_number || 'N/A'}</span></div>

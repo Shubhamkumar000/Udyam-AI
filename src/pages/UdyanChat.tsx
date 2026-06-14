@@ -21,7 +21,7 @@ const UdyanChat: React.FC = () => {
   const [chatHistory, setChatHistory] = useState<ChatMessage[]>([
     {
       sender: 'assistant',
-      text: "Namaste! I am your Udyan AI Compliance copilot. Ask me any regulatory questions regarding GST, FSSAI, Trade Licenses, or Fire NOCs in your preferred language.",
+      text: "Namaste! I am your Udyam AI Compliance copilot. Ask me any regulatory questions regarding GST, FSSAI, Trade Licenses, or Fire NOCs in your preferred language.",
       language: 'en'
     }
   ]);
@@ -510,7 +510,7 @@ I detected your query. As your Udyan AI Compliance copilot, I recommend checking
 **Recommended Renewal Steps:**
 1. Navigate to the **Registered Licenses** dashboard.
 2. Cross-reference the expiry date markers.
-3. Download the specific checklist, and use the **Udyan Autofill Extension** to carry out the forms ingestion.`,
+3. Download the specific checklist, and use the **Udyan AI portal redirect** to carry out the forms submission.`,
           hi: `### **अनुपालन सलाहकार प्रतिक्रिया**
 
 मैंने आपका प्रश्न दर्ज किया है। आपके उद्यान एआई अनुपालन सह-पायलट के रूप में, मैं आपकी **व्यवसाय प्रोफ़ाइल** विवरण की जांच करने की अनुशंसा करता हूं।
@@ -518,7 +518,7 @@ I detected your query. As your Udyan AI Compliance copilot, I recommend checking
 **अनुशंसित नवीनीकरण चरण:**
 1. **Registered Licenses** डैशबोर्ड पर जाएं।
 2. समाप्ति तिथि मार्करों की जांच करें।
-3. विशिष्ट चेकलिस्ट डाउनलोड करें, और फ़ॉर्म भरने के लिए **Udyan Autofill Extension** का उपयोग करें।`,
+3. विशिष्ट चेकलिस्ट डाउनलोड करें, और फ़ॉर्म सबमिट करने के लिए **Udyan AI पोर्टल रीडायरेक्ट** का उपयोग करें।`,
           kn: `### **ಅನುಸರಣೆ ಸಲಹಾ ಉತ್ತರ**
 
 ನಿಮ್ಮ ಪ್ರಶ್ನೆಯನ್ನು ನಾನು ಗುರುತಿಸಿದ್ದೇನೆ. ಉದ್ಯಾನ್ ಎಐ ಸಹಾಯಕನಾಗಿ, ನಿಮ್ಮ **ವ್ಯವಹಾರ ಪ್ರೊಫೈಲ್** ವಿವರಗಳನ್ನು ಪರಿಶೀಲಿಸಲು ಶಿಫಾರಸು ಮಾಡುತ್ತೇನೆ.
@@ -526,7 +526,7 @@ I detected your query. As your Udyan AI Compliance copilot, I recommend checking
 **ಶಿಫಾರಸು ಮಾಡಲಾದ ನವೀಕರಣ ಹಂತಗಳು:**
 1. **Registered Licenses** ಡ್ಯಾಶ್‌ಬೋರ್ಡ್‌ಗೆ ಭೇಟಿ ನೀಡಿ.
 2. ಅವಧಿ ಮುಗಿಯುವ ದಿನಾಂಕಗಳನ್ನು ಪರಿಶೀಲಿಸಿ.
-3. ಚೆಕ್‌ಲಿಸ್ಟ್ ಡೌನ್‌ಲೋಡ್ ಮಾಡಿ ಮತ್ತು ಅರ್ಜಿ ಸಲ್ಲಿಸಲು **Udyan Autofill Extension** ಬಳಸಿ.`,
+3. ಚೆಕ್‌ಲಿಸ್ಟ್ ಡೌನ್‌ಲೋಡ್ ಮಾಡಿ ಮತ್ತು ಅರ್ಜಿ ಸಲ್ಲಿಸಲು **Udyan AI ಪೋರ್ಟಲ್ ರೀಡೈರೆಕ್ಟ್** ಬಳಸಿ.`,
           te: `### **ఆల్రైట్ సలహా ప్రతిస్పందన**
 
 నేను మీ ప్రశ్నను గుర్తించాను. మీ ఉద్యాన్ AI కాపిలట్‌గా, మీ **వ్యాపార ప్రೊఫైల్** వివరాలను ఒకసారి తనిఖీ చేయాలని నేను సిఫార్సు చేస్తున్నాను.
@@ -534,7 +534,7 @@ I detected your query. As your Udyan AI Compliance copilot, I recommend checking
 **సిఫార్సు చేయబడిన దశలు:**
 1. **Registered Licenses** డాష్‌బోర్డ్‌ను సందర్శించండి.
 2. గడువు తేదీలను క్రాస్-చెక్ చేసుకోండి.
-3. చెక్‌లిస్ట్ డౌన్‌లోడ్ చేసి, **Udyan Autofill Extension** ఉపయోగించండి.`,
+3. చెక్‌లిస్ట్ డౌన్‌లోడ్ చేసి, **Udyan AI పోర్టల్ రీడైరెక్ట్** ఉపయోగించండి.`,
           ta: `### **இணக்க ஆலோசனை பதில்**
 
 உங்கள் கேள்வியை நான் கண்டறிந்துள்ளேன். உங்கள் உத்யன் AI உதவியாளராக, உங்கள் **வணிக சுயவிவரத்தை** சரிபார்க்க பரிந்துரைக்கிறேன்.
@@ -542,7 +542,7 @@ I detected your query. As your Udyan AI Compliance copilot, I recommend checking
 **புதுப்பிக்கும் படிகள்:**
 1. **Registered Licenses** டாஷ்போர்டிற்குச் செல்லவும்.
 2. காலாவதி தேதிகளை சரிபார்க்கவும்.
-3. இணக்க சரிபார்ப்புப் பட்டியலை பதிவிறக்கம் செய்து, விண்ணப்பிக்க **Udyan Autofill Extension** ஐப் பயன்படுத்தவும்.`
+3. இணக்க சரிபார்ப்புப் பட்டியலை பதிவிறக்கம் செய்து, விண்ணப்பிக்க **Udyan AI போர்டல் ரீடைரெக்ட்** ஐப் பயன்படுத்தவும்.`
         };
         responseText = generalFallbacks[selectedLang];
       }
@@ -584,7 +584,7 @@ I detected your query. As your Udyan AI Compliance copilot, I recommend checking
         <header className="p-6 border-b border-gray-200 bg-white flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
           <div>
             <h1 className="text-2xl font-bold font-norms tracking-tight text-black flex items-center gap-2">
-              Udyan AI Chat Assistant
+              Udyam AI Chat Assistant
               <span className="text-xs bg-indigo-50 text-indigo-600 border border-indigo-200 px-2.5 py-0.5 rounded-full font-sans uppercase font-bold flex items-center gap-1">
                 <Sparkles className="w-3.5 h-3.5 text-indigo-600" />
                 Sarvam AI
