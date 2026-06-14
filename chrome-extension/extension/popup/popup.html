@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>FormFill AI</title>
+  <link rel="stylesheet" href="popup.css" />
+</head>
+<body>
+  <div class="app">
+    <!-- Header -->
+    <div class="header">
+      <div class="logo">
+        <div class="logo-icon">⚡</div>
+        <span class="logo-text">FormFill <span class="logo-ai">AI</span></span>
+      </div>
+      <div id="status-dot" class="status-dot offline"></div>
+    </div>
+
+    <!-- Auth Section -->
+    <div id="auth-section" class="section">
+      <div class="auth-card">
+        <h2>Verify Your Identity</h2>
+        <p class="subtitle">Sign in to enable AI-powered autofill</p>
+        <div class="input-group">
+          <label>Email</label>
+          <input type="email" id="email-input" placeholder="you@example.com" />
+        </div>
+        <div class="input-group">
+          <label>Password</label>
+          <input type="password" id="password-input" placeholder="••••••••" />
+        </div>
+        <button id="login-btn" class="btn btn-primary">
+          <span id="login-text">Sign In</span>
+          <div id="login-spinner" class="spinner hidden"></div>
+        </button>
+        <p class="error-msg hidden" id="auth-error"></p>
+        <div class="divider"></div>
+        <p class="register-link">No account? <a href="#" id="show-register">Register</a></p>
+      </div>
+    </div>
+
+    <!-- Register Section -->
+    <div id="register-section" class="section hidden">
+      <div class="auth-card">
+        <h2>Create Account</h2>
+        <p class="subtitle">Set up your autofill profile</p>
+        <div class="input-group">
+          <label>Full Name</label>
+          <input type="text" id="reg-name" placeholder="Ashirwad Kumar" />
+        </div>
+        <div class="input-group">
+          <label>Email</label>
+          <input type="email" id="reg-email" placeholder="you@example.com" />
+        </div>
+        <div class="input-group">
+          <label>Password</label>
+          <input type="password" id="reg-password" placeholder="••••••••" />
+        </div>
+        <button id="register-btn" class="btn btn-primary">
+          <span id="register-text">Create Account</span>
+          <div id="register-spinner" class="spinner hidden"></div>
+        </button>
+        <p class="error-msg hidden" id="register-error"></p>
+        <div class="divider"></div>
+        <p class="register-link">Have an account? <a href="#" id="show-login">Sign In</a></p>
+      </div>
+    </div>
+
+    <!-- Dashboard Section -->
+    <div id="dashboard-section" class="section hidden">
+      <div class="user-bar">
+        <div class="user-info">
+          <div class="avatar" id="user-avatar">A</div>
+          <div>
+            <div class="user-name" id="user-name">Loading...</div>
+            <div class="user-email" id="user-email"></div>
+          </div>
+        </div>
+        <button id="logout-btn" class="btn-icon" title="Sign out">⇠</button>
+      </div>
+
+      <div class="action-card">
+        <div class="action-icon">🤖</div>
+        <h3>Sarvam AI Autofill</h3>
+        <p>AI will analyze this page's form structure and fill it with your verified data.</p>
+        <button id="autofill-btn" class="btn btn-primary btn-full">
+          <span id="autofill-text">✦ Autofill This Page</span>
+          <div id="autofill-spinner" class="spinner hidden"></div>
+        </button>
+      </div>
+
+      <div id="fill-result" class="fill-result hidden">
+        <div class="result-icon" id="result-icon">✓</div>
+        <div class="result-msg" id="result-msg"></div>
+      </div>
+
+      <div class="profile-link">
+        <button id="edit-profile-btn" class="btn btn-ghost btn-full">✎ Edit Profile Data</button>
+      </div>
+    </div>
+
+    <!-- Profile Edit Section -->
+    <div id="profile-section" class="section hidden">
+      <div class="profile-header">
+        <button id="back-btn" class="back-btn">← Back</button>
+        <h3>Your Profile Data</h3>
+      </div>
+      <div class="profile-form" id="profile-form">
+        <!-- Dynamically rendered -->
+      </div>
+      <button id="save-profile-btn" class="btn btn-primary btn-full">
+        <span id="save-text">Save Profile</span>
+        <div id="save-spinner" class="spinner hidden"></div>
+      </button>
+      <p class="error-msg hidden" id="profile-error"></p>
+    </div>
+  </div>
+
+  <script src="popup.js"></script>
+</body>
+</html>
