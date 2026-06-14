@@ -172,7 +172,7 @@ function detectMissingClient(sector: string, uploadedTypes: string[]): MissingLi
 export function analyzeComplianceRiskOffline(
   licenses: License[],
   onboarding: Partial<OnboardingAnswers> = {},
-  state = 'Karnataka'
+  state = 'Telangana'
 ): ComplianceRiskReport {
   const sector = onboarding.business_sector || '';
   const uploadedTypes = licenses.map((l) => l.type);

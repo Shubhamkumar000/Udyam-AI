@@ -88,3 +88,112 @@ html, body {
 .marquee-track:hover, .backers-track:hover {
   animation-play-state: paused;
 }
+
+/* Glow button effects — home page */
+.btn-glow-primary,
+.btn-glow-secondary,
+.btn-glow-ghost,
+.btn-glow-outline {
+  position: relative;
+  isolation: isolate;
+}
+
+.btn-glow-ghost:hover {
+  box-shadow: 0 0 20px rgba(139, 92, 246, 0.2);
+}
+
+.btn-glow-ghost .btn-glow-shimmer {
+  animation-duration: 4s;
+  opacity: 0.6;
+}
+
+.btn-glow-primary {
+  box-shadow:
+    0 0 0 1px rgba(255, 255, 255, 0.08) inset,
+    0 0 20px rgba(139, 92, 246, 0.35),
+    0 0 40px rgba(99, 102, 241, 0.15);
+}
+
+.btn-glow-primary:hover {
+  box-shadow:
+    0 0 0 1px rgba(255, 255, 255, 0.12) inset,
+    0 0 28px rgba(167, 139, 250, 0.55),
+    0 0 56px rgba(99, 102, 241, 0.25);
+}
+
+.btn-glow-secondary {
+  box-shadow:
+    0 0 16px rgba(191, 183, 227, 0.45),
+    0 0 32px rgba(139, 92, 246, 0.12);
+}
+
+.btn-glow-secondary:hover {
+  box-shadow:
+    0 0 24px rgba(191, 183, 227, 0.65),
+    0 0 48px rgba(139, 92, 246, 0.2);
+}
+
+.btn-glow-outline {
+  box-shadow:
+    0 0 24px rgba(99, 102, 241, 0.4),
+    0 0 48px rgba(167, 139, 250, 0.2),
+    0 4px 24px rgba(0, 0, 0, 0.15);
+}
+
+.btn-glow-outline:hover {
+  box-shadow:
+    0 0 32px rgba(129, 140, 248, 0.6),
+    0 0 64px rgba(167, 139, 250, 0.35),
+    0 4px 28px rgba(0, 0, 0, 0.2);
+}
+
+.btn-glow-shimmer {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    105deg,
+    transparent 35%,
+    rgba(255, 255, 255, 0.25) 45%,
+    rgba(255, 255, 255, 0.45) 50%,
+    rgba(255, 255, 255, 0.25) 55%,
+    transparent 65%
+  );
+  transform: translateX(-100%);
+  animation: btn-shimmer 3s ease-in-out infinite;
+  pointer-events: none;
+  z-index: 1;
+}
+
+.btn-glow-sparkle {
+  position: absolute;
+  width: 4px;
+  height: 4px;
+  border-radius: 50%;
+  background: white;
+  pointer-events: none;
+  z-index: 2;
+  opacity: 0;
+  animation: btn-sparkle 2.5s ease-in-out infinite;
+}
+
+.btn-glow-sparkle-1 {
+  top: 20%;
+  left: 15%;
+  animation-delay: 0s;
+}
+
+.btn-glow-sparkle-2 {
+  top: 65%;
+  right: 20%;
+  animation-delay: 1.2s;
+}
+
+@keyframes btn-shimmer {
+  0%, 100% { transform: translateX(-100%); }
+  50% { transform: translateX(100%); }
+}
+
+@keyframes btn-sparkle {
+  0%, 100% { opacity: 0; transform: scale(0); }
+  50% { opacity: 0.9; transform: scale(1); box-shadow: 0 0 8px 2px rgba(255, 255, 255, 0.8); }
+}
