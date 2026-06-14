@@ -130,11 +130,21 @@ export const getMe = async () => {
 // IDENTITY VERIFICATION API
 // ==========================================
 
-export const uploadIdentityDocs = async (aadhaarFile: File | null, panFile: File | null, phone: string) => {
+export const uploadIdentityDocs = async (
+  aadhaarFile: File | null, 
+  panFile: File | null, 
+  phone: string,
+  fullName?: string,
+  address?: string,
+  panNumber?: string
+) => {
   const formData = new FormData();
   if (aadhaarFile) formData.append('aadhaar', aadhaarFile);
   if (panFile) formData.append('pan', panFile);
   formData.append('phone', phone);
+  if (fullName) formData.append('fullName', fullName);
+  if (address) formData.append('address', address);
+  if (panNumber) formData.append('panNumber', panNumber);
 
   const token = getToken();
   const res = await fetch(`${API_BASE}/identity/upload`, {
@@ -181,7 +191,7 @@ export const getOnboarding = async (): Promise<Partial<OnboardingAnswers>> => {
       headers: getHeaders()
     });
     if (res.ok) {
-      const data = await res.ok ? await res.json() : null;
+      const data = await res.json();
       if (data) {
         return {
           business_sector: data.businessSector || '',
@@ -385,7 +395,27 @@ export const getComplianceProfile = async (): Promise<ComplianceProfile> => {
     const res = await fetch(`${API_BASE}/compliance-profile`, {
       headers: getHeaders()
     });
-    if (res.ok) return await res.json();
+    if (res.ok) {
+      const data = await res.json();
+      return {
+        compliance_score: data.complianceScore ?? 100,
+        risk_level: data.riskLevel || 'Low Risk',
+        required_licenses: data.requiredLicenses || [],
+        existing_licenses: data.existingLicenses || [],
+        missing_licenses: data.missingLicenses || [],
+        expiring_licenses: data.expiringLicenses || [],
+        expired_licenses: data.expiredLicenses || [],
+        upcoming_renewals: (data.upcomingRenewals || []).map((item: any) => ({
+          licenseId: item.licenseId,
+          type: item.type,
+          expiryDate: item.expiryDate,
+          status: item.status,
+          daysRemaining: item.daysRemaining
+        })),
+        compliance_insights: data.complianceInsights || [],
+        recommended_actions: data.recommendedActions || []
+      };
+    }
   } catch (err) {
     // Failover
   }

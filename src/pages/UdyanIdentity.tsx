@@ -196,7 +196,7 @@ const UdyanIdentity: React.FC = () => {
 
     try {
       // Call identity upload API to register details and store files
-      await uploadIdentityDocs(aadhaarFile, panFile, phoneNumber);
+      await uploadIdentityDocs(aadhaarFile, panFile, phoneNumber, fullName, address, panNumber);
       
       setSuccess(true);
       confetti({

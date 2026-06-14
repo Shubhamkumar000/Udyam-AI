@@ -215,11 +215,8 @@ async function recalculateCompliance(userId) {
   }
 
   const uploadedTypes = licenses.map(l => l.type);
-  const declaredExisting = onboarding ? onboarding.existingLicenses || [] : [];
-  const allExistingTypes = Array.from(new Set([...uploadedTypes, ...declaredExisting]));
-
-  const existingLicenses = requiredLicenses.filter(type => allExistingTypes.includes(type));
-  const missingLicenses = requiredLicenses.filter(type => !allExistingTypes.includes(type));
+  const existingLicenses = requiredLicenses.filter(type => uploadedTypes.includes(type));
+  const missingLicenses = requiredLicenses.filter(type => !uploadedTypes.includes(type));
 
   // 3. Compliance Score Calculation
   // Start score = 100
@@ -385,7 +382,7 @@ app.get('/api/auth/me', authenticateToken, async (req, res) => {
 app.post('/api/identity/upload', authenticateToken, upload.fields([{ name: 'aadhaar' }, { name: 'pan' }]), async (req, res) => {
   try {
     const files = req.files;
-    const { phone } = req.body;
+    const { phone, fullName, address, panNumber } = req.body;
 
     if (!files) return res.status(400).json({ error: 'Files are required for upload' });
 
@@ -402,14 +399,14 @@ app.post('/api/identity/upload', authenticateToken, upload.fields([{ name: 'aadh
         fileName: file.originalname,
         fileUrl,
         docType: 'Aadhaar',
-        rawOcrText: `AADHAAR CARD - GOVT OF INDIA\nName: ${req.user.fullName || 'Rahul Sharma'}\nAddress: MG Road, Bengaluru, Karnataka - 560001\nUID: 1234-5678-9012`
+        rawOcrText: `AADHAAR CARD - GOVT OF INDIA\nName: ${fullName || req.user.fullName || 'Rahul Sharma'}\nAddress: ${address || 'MG Road, Bengaluru, Karnataka - 560001'}\nUID: 1234-5678-9012`
       });
 
       results.aadhaar = {
         url: fileUrl,
         extracted: {
-          full_name: req.user.fullName || 'Rahul Sharma',
-          address: "MG Road, Bengaluru, Karnataka - 560001"
+          full_name: fullName || req.user.fullName || 'Rahul Sharma',
+          address: address || "MG Road, Bengaluru, Karnataka - 560001"
         }
       };
     }
@@ -425,15 +422,36 @@ app.post('/api/identity/upload', authenticateToken, upload.fields([{ name: 'aadh
         fileName: file.originalname,
         fileUrl,
         docType: 'PAN',
-        rawOcrText: `INCOME TAX DEPARTMENT - GOVT OF INDIA\nPAN CARD\nName: ${req.user.fullName || 'Rahul Sharma'}\nPAN: ABCDE1234F`
+        rawOcrText: `INCOME TAX DEPARTMENT - GOVT OF INDIA\nPAN CARD\nName: ${fullName || req.user.fullName || 'Rahul Sharma'}\nPAN: ${panNumber || 'ABCDE1234F'}`
       });
 
       results.pan = {
         url: fileUrl,
         extracted: {
-          pan_number: "ABCDE1234F"
+          pan_number: panNumber || "ABCDE1234F"
         }
       };
+    }
+
+    // Parse address parts if provided
+    let city = '';
+    let state = '';
+    let pincode = '';
+    if (address) {
+      const parts = address.split(',').map(p => p.trim());
+      // Try to find pincode
+      const pinMatch = address.match(/\d{6}/);
+      if (pinMatch) pincode = pinMatch[0];
+      
+      // Guess city and state from parts
+      if (parts.length >= 2) {
+        city = parts[parts.length - 2];
+        const statePart = parts[parts.length - 1];
+        state = statePart.replace(pincode, '').trim().replace(/-$/, '').trim();
+      } else {
+        city = 'Bengaluru';
+        state = 'Karnataka';
+      }
     }
 
     // Update business profile with phone & OCR outputs
@@ -442,11 +460,12 @@ app.post('/api/identity/upload', authenticateToken, upload.fields([{ name: 'aadh
       {
         mobile: phone || '',
         aadhaar: results.aadhaar ? "1234-5678-9012" : "",
-        pan: results.pan ? "ABCDE1234F" : "",
-        address: results.aadhaar ? "MG Road, Bengaluru" : "",
-        city: results.aadhaar ? "Bengaluru" : "",
-        state: results.aadhaar ? "Karnataka" : "",
-        pincode: results.aadhaar ? "560001" : "",
+        pan: panNumber || (results.pan ? "ABCDE1234F" : ""),
+        ownerName: fullName || req.user.fullName || '',
+        address: address || '',
+        city: city || (results.aadhaar ? "Bengaluru" : ""),
+        state: state || (results.aadhaar ? "Karnataka" : ""),
+        pincode: pincode || (results.aadhaar ? "560001" : ""),
         updatedAt: new Date()
       },
       { upsert: true, new: true }
@@ -455,9 +474,9 @@ app.post('/api/identity/upload', authenticateToken, upload.fields([{ name: 'aadh
     res.json({
       status: "success",
       extracted: {
-        full_name: req.user.fullName || 'Rahul Sharma',
-        address: results.aadhaar ? results.aadhaar.extracted.address : "",
-        pan_number: results.pan ? results.pan.extracted.pan_number : ""
+        full_name: fullName || req.user.fullName || 'Rahul Sharma',
+        address: address || "",
+        pan_number: panNumber || ""
       },
       profile: updatedProfile
     });
@@ -825,11 +844,8 @@ app.delete('/api/licenses/:id', authenticateToken, async (req, res) => {
 // 5. Compliance Profile & Dashboard API
 app.get('/api/compliance-profile', authenticateToken, async (req, res) => {
   try {
-    let profile = await ComplianceProfile.findOne({ userId: req.user.id });
-    if (!profile) {
-      await recalculateCompliance(req.user.id);
-      profile = await ComplianceProfile.findOne({ userId: req.user.id });
-    }
+    await recalculateCompliance(req.user.id);
+    const profile = await ComplianceProfile.findOne({ userId: req.user.id });
     res.json(profile);
   } catch (err) {
     res.status(500).json({ error: err.message });
