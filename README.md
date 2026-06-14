@@ -182,21 +182,6 @@ This reduces dependency on consultants and minimizes renewal delays.
 
 ---
 
-### Smart Reminders
-
-Automated reminders are generated before license expiration dates.
-
-Reminder Intervals:
-
-* 60 Days Before Expiry
-* 30 Days Before Expiry
-* 7 Days Before Expiry
-* 1 Day Before Expiry
-
-Notifications help businesses avoid accidental non-compliance.
-
----
-
 ### Penalty & Risk Analysis
 
 The platform identifies compliance risks and estimates potential penalties associated with:
@@ -321,10 +306,6 @@ This significantly reduces repetitive work and improves operational efficiency.
 ### Browser Automation
 
 * Chrome Extension
-
-### Mobile Application
-
-* Capacitor
 
 ### Deployment
 
