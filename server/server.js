@@ -56,10 +56,19 @@ const storage = multer.diskStorage({
 const upload = multer({ storage });
 const { analyzeComplianceRisk, analyzeSingleLicense } = require('./riskEngine');
 
-// Connect to MongoDB
-mongoose.connect(MONGODB_URI)
-  .then(() => console.log('Successfully connected to MongoDB database.'))
-  .catch(err => console.error('MongoDB database connection error:', err));
+// Connect to MongoDB (with connection caching for Vercel serverless)
+let cachedConnection = null;
+async function connectDB() {
+  if (cachedConnection && mongoose.connection.readyState === 1) {
+    return cachedConnection;
+  }
+  cachedConnection = await mongoose.connect(MONGODB_URI, {
+    bufferCommands: false,
+  });
+  console.log('Successfully connected to MongoDB database.');
+  return cachedConnection;
+}
+connectDB().catch(err => console.error('MongoDB database connection error:', err));
 
 // ==========================================
 // MONGOOSE SCHEMAS & MODELS
@@ -859,9 +868,14 @@ app.delete('/api/licenses/:id', authenticateToken, async (req, res) => {
 // 5. Compliance Profile & Dashboard API
 app.get('/api/compliance-profile', authenticateToken, async (req, res) => {
   try {
-    await recalculateCompliance(req.user.id);
-    const profile = await ComplianceProfile.findOne({ userId: req.user.id });
-    res.json(profile);
+    await connectDB();
+    let profile = await ComplianceProfile.findOne({ userId: req.user.id });
+    // If no profile exists yet, run a one-time calculation
+    if (!profile) {
+      await recalculateCompliance(req.user.id);
+      profile = await ComplianceProfile.findOne({ userId: req.user.id });
+    }
+    res.json(profile || {});
   } catch (err) {
     res.status(500).json({ error: err.message });
   }
@@ -870,8 +884,7 @@ app.get('/api/compliance-profile', authenticateToken, async (req, res) => {
 // AI Compliance Risk Engine
 app.get('/api/compliance-risk', authenticateToken, async (req, res) => {
   try {
-    await recalculateCompliance(req.user.id);
-
+    await connectDB();
     const licenses = await License.find({ userId: req.user.id });
     const onboarding = await OnboardingAnswers.findOne({ userId: req.user.id });
     const businessProfile = await BusinessProfile.findOne({ userId: req.user.id });

@@ -3,7 +3,7 @@ import { ArrowRight, LogOut } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import { getToken, removeToken } from '../utils/udyanStorage';
-import { fadeIn, fadeInUp, scaleIn, slideInLeft, slideInRight, staggerContainer, staggerFast, hoverLift, tapScale, viewportOnce } from '../utils/animations';
+import { fadeIn, fadeInUp, scaleIn, slideInLeft, slideInRight, staggerContainer, staggerFast, viewportOnce } from '../utils/animations';
 import GlowButton from '../components/Udyan/GlowButton';
 export const LogoIcon: React.FC<{ className?: string }> = ({ className = "w-7 h-7" }) => {
   return (

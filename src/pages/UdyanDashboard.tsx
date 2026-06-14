@@ -68,26 +68,33 @@ const UdyanDashboard: React.FC = () => {
     setLoading(true);
     setRiskLoading(true);
     try {
-      // Fetch authenticated user
-      const user = await getMe();
-      setCurrentUser(user);
+      // Fire ALL independent API calls in parallel instead of sequentially
+      const [user, profData, licData, compData, onboardingData] = await Promise.all([
+        getMe(),
+        getProfile(),
+        getLicenses(),
+        getComplianceProfile(),
+        getOnboarding()
+      ]);
 
-      // Fetch Profile, Licenses, and Compliance
-      const profData = await getProfile();
-      const licData = await getLicenses();
-      const compData = await getComplianceProfile();
-      const onboardingData = await getOnboarding();
-      const riskData = await getComplianceRiskReport();
-      
+      setCurrentUser(user);
       setProfile(profData);
       setLicenses(licData);
       setCompliance(compData);
       setBusinessSector(onboardingData.business_sector || '');
-      setRiskReport(riskData);
     } catch (err) {
       console.error('Failed to load database records:', err);
     } finally {
       setLoading(false);
+    }
+
+    // Load risk report separately so dashboard renders without waiting for it
+    try {
+      const riskData = await getComplianceRiskReport();
+      setRiskReport(riskData);
+    } catch (err) {
+      console.error('Failed to load risk report:', err);
+    } finally {
       setRiskLoading(false);
     }
   };
