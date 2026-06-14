@@ -17,9 +17,12 @@ import {
   getLicenses, 
   getProfile, 
   getComplianceProfile, 
-  getChecklist
+  getChecklist,
+  getLicenseRiskAssessment
 } from '../utils/udyanStorage';
 import type { License, BusinessProfile, ComplianceProfile } from '../utils/udyanStorage';
+import type { SingleLicenseRiskAssessment } from '../types/riskEngine';
+import LicenseRiskPanel from '../components/Udyan/LicenseRiskPanel';
 
 const licensePortalUrls: Record<string, string> = {
   'FSSAI': 'https://foodlicenseportal.org/Home/renew?gad_source=1&gad_campaignid=23038392925&gbraid=0AAAAACzocouD9ojWtNfBiCtpWM2iev4Kp&gclid=Cj0KCQjw_7PRBhDcARIsAMjV7jnDkAkl_H_guWUD_Spud_xBdQ1LIoXh2ZWCh0R9HprCRjXePuHlHIcaAj4YEALw_wcB',
@@ -40,6 +43,8 @@ const UdyanLicenseDetail: React.FC = () => {
   const [profile, setProfile] = useState<BusinessProfile | null>(null);
   const [compliance, setCompliance] = useState<ComplianceProfile | null>(null);
   const [license, setLicense] = useState<License | null>(null);
+  const [riskAssessment, setRiskAssessment] = useState<SingleLicenseRiskAssessment | null>(null);
+  const [riskLoading, setRiskLoading] = useState(true);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
@@ -48,6 +53,7 @@ const UdyanLicenseDetail: React.FC = () => {
 
   const loadData = async () => {
     setLoading(true);
+    setRiskLoading(true);
     try {
       const profData = await getProfile();
       const licData = await getLicenses();
@@ -62,10 +68,20 @@ const UdyanLicenseDetail: React.FC = () => {
       } else {
         setLicense(null);
       }
+
+      if (type) {
+        try {
+          const riskData = await getLicenseRiskAssessment(type);
+          setRiskAssessment(riskData);
+        } catch {
+          setRiskAssessment(null);
+        }
+      }
     } catch (err) {
       console.error('Failed to load license details:', err);
     } finally {
       setLoading(false);
+      setRiskLoading(false);
     }
   };
 
@@ -287,6 +303,13 @@ const UdyanLicenseDetail: React.FC = () => {
 
           {/* RIGHT COLUMN: Checklist & Risks */}
           <div className="space-y-6">
+
+            {/* AI Compliance Risk Analysis */}
+            <LicenseRiskPanel
+              assessment={riskAssessment}
+              loading={riskLoading}
+              licenseType={licType}
+            />
             
             {/* Card: Compliance Checklist */}
             <div className="bg-white border border-gray-200 rounded-2xl p-6 shadow-sm">

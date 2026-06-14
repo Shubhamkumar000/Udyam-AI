@@ -40,6 +40,7 @@ const storage = multer.diskStorage({
   }
 });
 const upload = multer({ storage });
+const { analyzeComplianceRisk, analyzeSingleLicense } = require('./riskEngine');
 
 // Connect to MongoDB
 mongoose.connect(MONGODB_URI)
@@ -847,6 +848,70 @@ app.get('/api/compliance-profile', authenticateToken, async (req, res) => {
     await recalculateCompliance(req.user.id);
     const profile = await ComplianceProfile.findOne({ userId: req.user.id });
     res.json(profile);
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
+// AI Compliance Risk Engine
+app.get('/api/compliance-risk', authenticateToken, async (req, res) => {
+  try {
+    await recalculateCompliance(req.user.id);
+
+    const licenses = await License.find({ userId: req.user.id });
+    const onboarding = await OnboardingAnswers.findOne({ userId: req.user.id });
+    const businessProfile = await BusinessProfile.findOne({ userId: req.user.id });
+
+    const report = analyzeComplianceRisk({
+      licenses,
+      onboarding: onboarding || {},
+      businessProfile: businessProfile || {},
+    });
+
+    res.json(report);
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
+app.get('/api/compliance-risk/license/:type', authenticateToken, async (req, res) => {
+  try {
+    const { type } = req.params;
+    const licenses = await License.find({ userId: req.user.id, type });
+    const onboarding = await OnboardingAnswers.findOne({ userId: req.user.id });
+
+    if (licenses.length === 0) {
+      const { detectMissingLicenses, estimateMissingLicenseImpact, SECTOR_REQUIRED_LICENSES } = require('./riskEngine');
+      const sector = onboarding?.businessSector || '';
+      const uploadedTypes = (await License.find({ userId: req.user.id })).map((l) => l.type);
+      const missing = detectMissingLicenses(sector, uploadedTypes).find((m) => m.licenseType === type);
+
+      if (missing || (SECTOR_REQUIRED_LICENSES[sector] || []).includes(type)) {
+        const impact = missing || estimateMissingLicenseImpact(type);
+        return res.json({
+          licenseType: type,
+          status: 'MISSING',
+          riskLevel: impact.risk === 'HIGH' ? 'HIGH' : 'MEDIUM',
+          urgency: impact.risk,
+          daysUntilExpiry: null,
+          daysSinceExpiry: null,
+          estimatedPenalty: {
+            min: impact.penaltyEstimate.min,
+            max: impact.penaltyEstimate.max,
+            formatted: impact.penaltyEstimate.formatted,
+            confidence: 70,
+          },
+          recommendedAction: impact.recommendedAction,
+          legalConsequences: impact.legalConsequences,
+          potentialImpact: impact.potentialImpact,
+        });
+      }
+
+      return res.status(404).json({ error: 'License not found' });
+    }
+
+    const assessment = analyzeSingleLicense(licenses[0], onboarding || {});
+    res.json(assessment);
   } catch (err) {
     res.status(500).json({ error: err.message });
   }

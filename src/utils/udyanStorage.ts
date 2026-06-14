@@ -2,6 +2,9 @@
 // Connects React frontend directly to the MongoDB Express API server
 // Gracefully falls back to LocalStorage for zero-dependency testing
 
+import type { ComplianceRiskReport, SingleLicenseRiskAssessment } from '../types/riskEngine';
+import { analyzeComplianceRiskOffline, analyzeSingleLicenseOffline } from './riskEngine';
+
 export interface BusinessProfile {
   business_name: string;
   owner_name: string;
@@ -450,6 +453,73 @@ export const getComplianceProfile = async (): Promise<ComplianceProfile> => {
     compliance_insights: ["Local storage offline backup analysis is running."],
     recommended_actions: ["Connect to MongoDB server for full analysis."]
   };
+};
+
+// ==========================================
+// AI COMPLIANCE RISK ENGINE API
+// ==========================================
+
+export const getComplianceRiskReport = async (): Promise<ComplianceRiskReport> => {
+  try {
+    const res = await fetch(`${API_BASE}/compliance-risk`, {
+      headers: getHeaders(),
+    });
+    if (res.ok) return await res.json();
+  } catch {
+    // Failover to client-side engine
+  }
+
+  const licenses = await getLicenses();
+  const onboarding = await getOnboarding();
+  const profile = await getProfile();
+  return analyzeComplianceRiskOffline(licenses, onboarding, profile?.state);
+};
+
+export const getLicenseRiskAssessment = async (licenseType: string): Promise<SingleLicenseRiskAssessment> => {
+  try {
+    const res = await fetch(`${API_BASE}/compliance-risk/license/${encodeURIComponent(licenseType)}`, {
+      headers: getHeaders(),
+    });
+    if (res.ok) return await res.json();
+  } catch {
+    // Failover
+  }
+
+  const licenses = await getLicenses();
+  const onboarding = await getOnboarding();
+  const license = licenses.find((l) => l.type === licenseType);
+
+  if (license) {
+    return analyzeSingleLicenseOffline(license, onboarding);
+  }
+
+  const { SECTOR_REQUIRED_LICENSES, PENALTY_DATABASE } = await import('./riskEngine');
+  const onboardingData = await getOnboarding();
+  const sector = onboardingData.business_sector || '';
+  const required = SECTOR_REQUIRED_LICENSES[sector] || [];
+  const meta = PENALTY_DATABASE[licenseType] || { minPenalty: 5000, maxPenalty: 50000, legalConsequences: ['Operational restrictions'], recommendedAction: `Apply for ${licenseType}.` };
+
+  if (required.includes(licenseType)) {
+    return {
+      licenseType,
+      status: 'MISSING',
+      daysUntilExpiry: null,
+      daysSinceExpiry: null,
+      riskLevel: 'HIGH',
+      urgency: 'HIGH',
+      estimatedPenalty: {
+        min: meta.minPenalty,
+        max: Math.round(meta.maxPenalty * 0.5),
+        formatted: `₹${meta.minPenalty.toLocaleString('en-IN')} - ₹${Math.round(meta.maxPenalty * 0.5).toLocaleString('en-IN')}`,
+        confidence: 70,
+      },
+      recommendedAction: meta.recommendedAction,
+      legalConsequences: meta.legalConsequences,
+      potentialImpact: 'Business Closure Risk',
+    };
+  }
+
+  throw new Error('License not found');
 };
 
 export const getDashboardData = async () => {
